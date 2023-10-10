@@ -1,0 +1,109 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>query_locate</title>
+    <link rel="stylesheet" href="~/Scripts/css/table.css" type="text/css">
+    <script src="~/Scripts/vue/dist/vue.js"></script>
+    <script type="text/javascript" src="~/Scripts/javascript/comm/comm.js"></script>
+    <script type="text/javascript" src="~/Scripts/javascript/comm/list.js"></script>
+    <script type="text/javascript" src="~/Scripts/javascript/jquery-1.7.2.js"></script>
+    <script type="text/javascript" src="~/Scripts/javascript/calendar-ch.js"></script>
+    <script type="text/javascript" src="~/Scripts/javascript/comm/time.js"></script>
+    <link rel="stylesheet" href="~/Scripts/css/cwcalendar.css" type="text/css"></link>
+    <script src="~/Scripts/element-ui/lib/index.js"></script>
+    <link href="~/Scripts/element-ui/lib/theme-chalk/index.css" rel="stylesheet" />
+    <STYLE type="text/css">
+        .el-input--prefix .el-input__inner {
+            padding-left: 30px;
+        }
+    </STYLE>
+</head>
+<body>
+    <div id="app">
+        <form>
+            <input type="hidden" name="page.startPage" value="0">
+            <table width="100%">
+                <tr>
+                    <td>
+                        <font color="black">您正在做的业务是:人力资源管理--薪酬发放管理--薪酬发放查询</font>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div align="right">
+                            <input type="button" value="查询" class="BUTTON_STYLE1" v-on:click="tj">
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            <table width="100%" border="1" cellpadding=0 cellspacing=1
+                   bordercolorlight=#848284 bordercolordark=#eeeeee
+                   class="TABLE_STYLE1">
+                <tr>
+                    <td width="20%" class="TD_STYLE1">
+                        请输入薪酬单号:
+                    </td>
+                    <td class="TD_STYLE2">
+                        <input type="text" name="salaryGrant.salaryGrantId" class="INPUT_STYLE1" v-model="Id"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TD_STYLE1">
+                        请输入关键字:
+                    </td>
+                    <td class="TD_STYLE2">
+                        <input type="text" name="utilbean.primarKey" class="INPUT_STYLE1" v-model="name">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TD_STYLE1">
+                        请输入发放时间:
+                    </td>
+                    <td width="70%" class="TD_STYLE2">
+                        <el-date-picker v-model="Qtime"
+                                        type="month"
+                                        placeholder="选择月"
+                                        value-format="yyyy-MM"
+                                        >
+                        </el-date-picker>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</body>
+</html>
+<script type="text/javascript">
+    var vm = new Vue({
+        el: "#app",
+        data: {
+            Id: "",
+            name: "",
+            Qtime: "",
+        },
+        methods: {
+            tj: function () {
+                let year = this.Qtime.substring(0, 4);
+                let mone = this.Qtime.substring(5, 7);
+                let where = " check_status=1 ";
+                if (this.Id != "") {
+                    where += " and SalaryStandardId LIKE CONCAT('%','" + this.Id + "','%')";
+                }
+                if (this.name != "") {
+                    where += " AND first_kind_name  LIKE CONCAT('%','" + this.name + "','%') OR second_kind_name LIKE CONCAT('%','" + this.name + "','%') OR third_kind_name  LIKE CONCAT('%','" + this.name + "','%')";
+                }
+                if (this.Qtime!="") {
+                    where += " and YEAR(regist_time) = '" + year + "' and MONTH(regist_time) ='" + mone + "'";
+                }
+                location.href = "query_list?where=" + where;
+            }
+        }
+    })
+</script>

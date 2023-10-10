@@ -1,0 +1,348 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>register_commit</title>
+    <script src="~/Scripts/vue/dist/vue.js"></script>
+    <script src="~/Scripts/element-ui/lib/index.js"></script>
+    <link href="~/Scripts/element-ui/lib/theme-chalk/index.css" rel="stylesheet" />
+    <script src="~/Scripts/axios/dist/axios.js"></script>
+    <script src="~/Scripts/javascript/jquery-1.7.2.js"></script>
+    <!-- page css -->
+    <!-- Core css -->
+    <link rel="shortcut icon" href="~/static/image/logo/favicon.ico">
+    <link href="~/static/css/app.min.css" rel="stylesheet">
+</head>
+<body>
+    <div id="app">
+        <el-card class="box-card">
+            <div slot="header" class="clearfix">
+                <el-breadcrumb separator="/">
+                    <el-breadcrumb-item>首页</el-breadcrumb-item>
+                    <el-breadcrumb-item>人力资源</el-breadcrumb-item>
+                    <el-breadcrumb-item>薪酬标准管理</el-breadcrumb-item>
+                    <el-breadcrumb-item>薪酬发放登记</el-breadcrumb-item>
+                </el-breadcrumb>
+                <table style=" -webkit-transform: translateY(75%); ">
+                    <tr>
+                        <td colspan="2" style="text-align: left">
+                            薪酬单编号：
+                            {{SSid}}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="text-align: left">
+                            机构：
+                            {{leve}}级结构
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="text-align: left">
+                            本机构总人数:{{FileList.length}}
+                            <input type="hidden" name="salaryGrant.humanAmount" value="5">
+                            ，基本薪酬总数:{{bmoney}}
+                            ，实发总额:<span id="salarySum_sum">{{bmoney}}</span>
+                            <input type="hidden" id="salaryPaidSum" name="salaryGrant.salaryPaidSum" value="139823.0" />
+
+                        </td>
+                    </tr>
+                </table>
+                <p style="float:right;">
+                    <input type="button" value="提交" class="BUTTON_STYLE1" v-on:click="tj">
+                    <input type="button" value="返回" onclick="javascript:window.history.back();" class="BUTTON_STYLE1">
+                </p>
+                <p  style="float:right;">
+                    登记人:<input type="text" name="salaryGrant.register" v-model="name" size="8" readonly="readonly">
+                    登记时间：<span id="Tdate"></span>
+                    <input type="hidden" name="salaryGrant.registTime" id="Tdate2">
+                    &nbsp;
+                </p>
+            </div>
+            <div class="text item">
+                <div class="table-responsive">
+                    <table class="table table-sm" >
+
+                        <tr>
+                            <td class="TD_STYLE1">
+                                <span>序号</span>
+                            </td>
+                            <td class="TD_STYLE1">
+                                <span>档案编号</span>
+                            </td>
+                            <td class="TD_STYLE1">
+                                <span>姓名</span>
+                            </td>
+
+                            <td class="TD_STYLE1" v-for="item in ssdList">
+                                {{item.item_name}}
+                            </td>
+
+                            <td class="TD_STYLE1" width="7%">
+                                奖励金额
+                            </td>
+                            <td class="TD_STYLE1" width="7%">
+                                销售绩效总额
+                            </td>
+                            <td class="TD_STYLE1" width="7%">
+                                应扣金额
+                            </td>
+                            <td class="TD_STYLE1" width="7%">
+                                实发金额
+                            </td>
+                        </tr>
+
+                        <tr class="TD_STYLE2" v-for="(item,index) in FileList">
+                            <input type="hidden" :id="salaryStandardSum(index)" name="grantDetails[0].salaryStandardSum" :value="item.salary_sum" />
+                            <td>
+                                {{index + 1}}
+                            </td>
+                            <td>
+                                {{item.human_id}}
+                            </td>
+                            <td>
+                                {{item.human_name}}
+                            </td>
+                            <td v-for="item in ssdList">
+                                {{item.salary}}
+                            </td>
+
+                            <td>
+                                <input type="text" name="grantDetails[0].bounsSum" :id="bounsSum(index)" v-on:input="onKeyPress(index+1)" class="INPUT_STYLE2" />
+                            </td>
+                            <td>
+                                <input type="text" name="grantDetails[0].saleSum" :id="saleSum(index)" v-on:input="onKeyPress(index+1)" class="INPUT_STYLE2" />
+                            </td>
+                            <td>
+                                <input type="text" name="grantDetails[0].deductSum" :id="deductSum(index)" v-on:input="onKeyPress(index+1)" class="INPUT_STYLE2" />
+                            </td>
+                            <td>
+                                <input type="text" name="grantDetails[0].salaryPaidSum" readonly="readonly" :id="salaryPaidSum(index)" :value="item.salary_sum" class="INPUT_STYLE2" />
+                            </td>
+
+                        </tr>
+                    </table>
+                </div>
+                </div>
+</el-card>
+            </div>
+</body>
+</html>
+
+<script type="text/javascript">
+    function time() {
+        var tdate = document.getElementById("Tdate");
+        var d = new Date();
+        var y = d.getFullYear();
+        var moth = d.getMonth() + 1;
+        var date = d.getDate();
+        var h = d.getHours();
+        var m = d.getMinutes();
+        var s = d.getSeconds();
+        var hh = 20 - 1 - h;
+        var mm = 60 - 1 - m;
+        var ss = 60 - s;
+        if (hh > 0) {
+            mm = mm + 60 * hh;
+        }
+        if (moth < 10) {
+            moth = "0" + moth;
+        }
+        if (date < 10) {
+            date = "0" + date;
+        }
+        if (h < 10) {
+            h = "0" + h;
+        }
+        if (m < 10) {
+            m = "0" + m;
+        }
+        if (s < 10) {
+            s = "0" + s;
+        }
+        if (mm < 10) {
+            mm = "0" + mm;
+        }
+        if (ss < 10) {
+            ss = "0" + ss;
+        }
+
+        tdate.innerHTML = y + "-" + moth + "-" + date + " " + h + ":" + m + ":" + s;
+        document.getElementById("Tdate2").value = tdate.innerHTML;
+    }
+    window.onload = time;
+    var out = window.setInterval(time, 1000);
+
+
+
+</script>
+
+<script type="text/javascript">
+    var vm = new Vue({
+        el: "#app",
+        data: {
+            FileList: [],
+            ssdList:[],
+            name: localStorage.getItem("uname"),
+            SSid: "",
+            Sum: "",
+            money: "",
+            leve: "",
+            leveid:"",
+            ffbh: "",
+            smoney: "",
+            bmoney: "",
+            sgid:"",
+        },
+        methods: {
+            find: function () {
+                let t = this;
+                axios.get("HFLeve", {
+                    params: {
+                        leve: this.leve,
+                        leveid: this.leveid
+                    }
+                }).then(res => {
+                    this.FileList = res.data;
+                    this.SSid = this.FileList[0].salary_standard_id;
+                    var size = this.FileList.length;
+                    var sum = 0;
+                    console.log(this.FileList);
+                    for (var j = 0; j < size; j++) {
+                        sum += Number(this.FileList[j].salary_sum);
+                    }
+                    this.bmoney = sum;
+                    this.smoney = sum;
+                    axios.get("FindssdSSid", {
+                        params: {
+                            ssid: t.SSid
+                        }
+                    }).then(res => {
+                        t.ssdList = res.data;
+                    }).catch(err => {
+                        console.log(err);
+                    })
+                }).catch(err => {
+                    console.log(err);
+                })
+               
+                
+            },
+            onKeyPress: function (i) {
+                var size = this.FileList.length;
+                var bounsSum = document.getElementById("bounsSum" + i);
+                var saleSum = document.getElementById("saleSum" + i);
+                var deductSum = document.getElementById("deductSum" + i);
+                var salaryPaidSum = document.getElementById("salaryPaidSum" + i);
+                if (isNaN(bounsSum.value) || bounsSum.value < 0) {
+                    alert("金额填写错误!");
+                    bounsSum.value = "0.00";
+                    return;
+                }
+                if (isNaN(saleSum.value) || saleSum.value < 0) {
+                    alert("金额填写错误!");
+                    saleSum.value = "0.00";
+                    return;
+                }
+                if (isNaN(deductSum.value) || deductSum.value < 0) {
+                    alert("金额填写错误!");
+                    deductSum.value = "0.00";
+                    return;
+                }
+                salaryPaidSum.value = Number(bounsSum.value) + Number(saleSum.value) - Number(deductSum.value) + Number(document.getElementById("salaryStandardSum" + i).value);
+                var sum = 0;
+                for (var j = 1; j <= size; j++) {
+                    sum = Number(sum) + Number(document.getElementById("salaryPaidSum" + j).value);
+                }
+                document.getElementById("salarySum_sum").innerHTML = sum;
+                document.getElementById("salaryPaidSum").value = sum;
+                this.smoney = sum;
+            },
+            bounsSum: function (i) {
+                return "bounsSum" + (i + 1)
+            },
+            saleSum: function (i) {
+                return "saleSum" + (i + 1)
+            },
+            deductSum: function (i) {
+                return "deductSum" + (i + 1)
+            },
+            salaryPaidSum: function (i) {
+                return "salaryPaidSum" + (i + 1)
+            },
+            salaryStandardSum: function (i) {
+                return "salaryStandardSum" + (i + 1)
+            },
+            tj: function () {
+                let slist = []
+                for (var i = 0; i < this.FileList.length; i++) {
+                    let fid = this.FileList[i].human_id;
+                    let hname = this.FileList[i].human_name;
+                    let nsum = this.FileList[i].salary_sum;
+                    var bounsSum = document.getElementById("bounsSum" + Number(i + 1)).value;
+                    var saleSum = document.getElementById("saleSum" + Number(i + 1)).value;
+                    var deductSum = document.getElementById("deductSum" + Number(i + 1)).value;
+                    var salaryPaidSum = document.getElementById("salaryPaidSum" + Number(i + 1)).value;
+                    slist.push({ human_id: fid, human_name: hname, bouns_sum: bounsSum, sale_sum: saleSum, deduct_sum: deductSum, salary_standard_sum: nsum, salary_paid_sum: salaryPaidSum });
+                }
+                axios.post("InsertSGD", {
+                    list: slist,
+                    salary_grant_id: this.sgid,
+                    SalaryStandardId: this.SSid,
+                    first_kind_id: this.FileList[0].first_kind_id,
+                    first_kind_name: this.FileList[0].first_kind_name,
+                    second_kind_id: this.FileList[0].second_kind_id,
+                    second_kind_name: this.FileList[0].second_kind_name,
+                    third_kind_id: this.FileList[0].third_kind_id,
+                    third_kind_name: this.FileList[0].third_kind_name,
+                    human_amount: this.FileList.length,
+                    salary_standard_sum: this.bmoney,
+                    salary_paid_sum: this.smoney,
+                    register: this.name,
+                    regist_time: document.getElementById("Tdate2").value,
+                }).then(res => {
+                    if (res.data) {
+                        alert("登记成功");
+                        location.href = "register_locate";
+                    } else {
+                        alert("登记失败");
+                        location.href = "register_locate";
+                    }
+                }).catch(err => {
+                    console.log(err);
+                })
+            },
+            createCode() {
+                var d = new Date();
+                var y = d.getFullYear();
+                var moth = d.getMonth() + 1;
+                var date = d.getDate();
+                if (moth < 10) {
+                    moth = "0" + moth;
+                }
+                if (date < 10) {
+                    date = "0" + date;
+                }
+                var code = '';
+                var codeLength = 4;
+                var random = new Array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
+                for (var i = 0; i < codeLength; i++) {
+                    var index = Math.floor(Math.random() * 9);
+                    code += random[index];
+                }
+                this.sgid = "SG" + y + moth + date + code;
+            },
+        },
+        mounted: function () {
+            this.leve =@Html.Raw(Json.Encode(@ViewBag.leve));
+            this.leveid=@Html.Raw(Json.Encode(@ViewBag.leveid));
+            this.find();
+            this.createCode();
+        }
+    })
+</script>

@@ -1,0 +1,119 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>check_list</title>
+    <link href="~/Scripts/css/table.css" rel="stylesheet" />
+    <script src="~/Scripts/vue/dist/vue.js"></script>
+    <script src="~/Scripts/element-ui/lib/index.js"></script>
+    <link href="~/Scripts/element-ui/lib/theme-chalk/index.css" rel="stylesheet" />
+    <script src="~/Scripts/axios/dist/axios.js"></script>
+    <STYLE type="text/css">
+        td {
+            text-align: center
+        }
+    </STYLE>
+</head>
+<body>
+    <div id="app">
+        <table width="100%">
+            <tr>
+                <td style="text-align:left;">
+                    <font color="black">您正在做的业务是:人力资源管理--薪酬发放管理--薪酬发放登记审核</font>
+                    <br /><br /><br />
+                </td>
+            </tr>
+        </table>
+        <el-table :data="listtdate"
+                  border
+                  style="width: 100%"
+                  :cell-style="{ textAlign: 'center' }"
+                  :header-cell-style="{textAlign: 'center'}">
+            <el-table-column prop="salary_grant_id"
+                             label="薪酬发放编号"
+                             width="200px">
+            </el-table-column>
+            <el-table-column prop="first_kind_name"
+                             label="I级机构名称"
+                             width="200px">
+            </el-table-column>
+            <el-table-column prop="second_kind_name"
+                             label="II级机构名称"
+                             width="200px">
+            </el-table-column>
+            <el-table-column prop="third_kind_name"
+                             label="III级机构名称"
+                             width="200px">
+            </el-table-column>
+            <el-table-column prop="human_amount"
+                             label="人数"
+                             width="200px">
+            </el-table-column>
+            <el-table-column prop="salary_standard_sum"
+                             label="基本薪酬总额(元)"
+                             width="200px">
+            </el-table-column>
+            <el-table-column label="复  核">
+                <template slot-scope="scope">
+                    <el-button size="mini" type="danger" v-on:click="tj(scope.row)">复  核</el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+        <el-pagination v-on:size-change="handleSizeChange"
+                       v-on:current-change="handleCurrentChange"
+                       :current-page="currentPage"
+                       :page-sizes="[1, 3,4]"
+                       :page-size="pagesize"
+                       layout="total, sizes, prev, pager, next, jumper"
+                       :total="Totalnumber"
+                       style="padding-left: 30%; padding-top: 10px;">
+        </el-pagination>
+    </div>
+</body>
+</html>
+<script type="text/javascript">
+    var vm = new Vue({
+        el: "#app",
+        data: {
+            listtdate: [],
+            currentPage: 1,
+            pagesize: 1,
+            Totalnumber: 0,
+        },
+        methods: {
+            find: function () {
+                axios.get("check_listFind", {
+                    params: {
+                        currentPage: this.currentPage,
+                        pageSize: this.pagesize
+                    }
+                }).then(res => {
+                    this.listtdate = res.data.CList;
+                        this.Totalnumber = res.data.Totalnumber;
+                }).catch(err => {
+                    console.log(err);
+                })
+            },
+            handleSizeChange(val) {
+                this.pagesize = val;
+                this.find();
+            },
+            handleCurrentChange(val) {
+                this.currentPage = val;
+                this.find();
+            },
+            tj: function (row) {
+                location.href = "/Salary_Issue/check?ssid=" + row.SalaryStandardId + "&sgid=" + row.salary_grant_id;
+            }
+        },
+        mounted: function () {
+            this.find();
+           }
+    })
+ </script>

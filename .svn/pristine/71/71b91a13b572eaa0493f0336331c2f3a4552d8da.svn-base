@@ -1,0 +1,64 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>register_locate</title>
+    <link href="~/Scripts/css/table.css" rel="stylesheet" />
+
+    <script src="~/Scripts/vue/dist/vue.js"></script>
+    <script src="~/Scripts/element-ui/lib/index.js"></script>
+    <link href="~/Scripts/element-ui/lib/theme-chalk/index.css" rel="stylesheet" />
+    <!-- page css -->
+    <!-- Core css -->
+    <link rel="shortcut icon" href="~/static/image/logo/favicon.ico">
+    <link href="~/static/css/app.min.css" rel="stylesheet">
+
+</head>
+<body>
+    <div id="app">
+        <el-card class="box-card">
+            <div slot="header" class="clearfix">
+                <el-breadcrumb separator="/">
+                    <el-breadcrumb-item>首页</el-breadcrumb-item>
+                    <el-breadcrumb-item>人力资源</el-breadcrumb-item>
+                    <el-breadcrumb-item>薪酬发放管理</el-breadcrumb-item>
+                    <el-breadcrumb-item>薪酬发放登记</el-breadcrumb-item>
+                </el-breadcrumb>
+                <el-button style="float: right; padding: 3px 0" type="text" v-on:click="tj">提 交</el-button>
+            </div>
+            <div class="text item">
+                <div class="mb-3">
+                    <label  class="form-label">请选择几级机构薪资发放</label>
+                    <select class="form-select" id="validationCustom04" required v-model="SeleVA">
+                        <option selected value="I">一级机构发放方式</option>
+                        <option value="II">二级机构发放方式</option>
+                        <option value="III">三级机构发放方式</option>
+                    </select>
+                </div>
+            </div>
+            </el-card>
+            </div>
+</body>
+</html>
+<script type="text/javascript">
+    var vm = new Vue({
+        el: "#app",
+        data: {
+            SeleVA: "I"
+        },
+        methods: {
+            tj: function () {
+                location.href = "register_list?leve=" + this.SeleVA
+            }
+        },
+        mounted: function () {
+          
+        }
+    })
+</script>

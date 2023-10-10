@@ -1,0 +1,17 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Model
+{
+    //职位分类
+    public class Config_Major_Kind
+    {
+        public int mfk_id { get; set; }
+        public int major_kind_id { get; set; }
+
+        public string major_kind_name { get; set; }
+    }
+}

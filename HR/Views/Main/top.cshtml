@@ -1,0 +1,53 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>top</title>
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="~/static/image/logo/favicon.ico">
+    <script src="~/Scripts/vue/dist/vue.js"></script>
+
+    <!-- page css -->
+    <!-- Core css -->
+    <link href="~/static/css/app.min.css" rel="stylesheet">
+</head>
+<body>
+    <div id="app">
+        <div class="header-text-dark header-nav layout-horizon">
+            <div class="header-nav-wrap container">
+                <div class="header-nav-left">
+                    <div class="nav-logo">
+                        <div class="w-100 logo">
+                            <img class="img-fluid" src="~/static/picture/logo.png" style="max-height: 70px;" alt="logo">
+                            <span class="display-5" style="margin-left: 330px;">人力资源管理系统</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="header-nav-right">
+                    <div >
+                        <div class="toggle-wrapper" id="nav-profile-dropdown" data-bs-toggle="dropdown" style=" line-height: 69.2px;">
+                            <i class="icon-user feather"></i>
+                            <span class="fw-bold mx-1">{{name}}</span>
+                        </div>
+                    </div>
+                    
+               </div>
+             </div>
+        </div>
+    </div>
+</body>
+</html>
+<script>
+    var vm = new Vue({
+        el: "#app",
+        data: {
+            name: localStorage.getItem("uname")
+        }
+    })
+</script>

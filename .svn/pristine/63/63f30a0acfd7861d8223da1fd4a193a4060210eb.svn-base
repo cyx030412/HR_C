@@ -1,0 +1,18 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+
+namespace HR.Controllers
+{
+    public class Salary_scaleController : Controller
+    {
+        // GET: Salary_scale
+        //薪酬标准登记
+        public ActionResult salarystandard_register()
+        {
+            return View();
+        }
+    }
+}

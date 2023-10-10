@@ -1,0 +1,290 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script type="text/javascript" src="~/Scripts/javascript/comm/comm.js"></script>
+    <script type="text/javascript" src="~/Scripts/javascript/jquery-1.7.2.js"></script>
+    <script src="~/Scripts/vue/dist/vue.js"></script>
+    <script src="~/Scripts/element-ui/lib/index.js"></script>
+    <link href="~/Scripts/element-ui/lib/theme-chalk/index.css" rel="stylesheet" />
+    <script src="~/Scripts/axios/dist/axios.js"></script>
+
+
+    <!-- page css -->
+    <!-- Core css -->
+    <link rel="shortcut icon" href="~/static/image/logo/favicon.ico">
+    <link href="~/static/css/app.min.css" rel="stylesheet">
+
+
+
+    <title>无标题文档</title>
+</head>
+<body>
+    <div id="app">
+        <el-card class="box-card">
+            <div slot="header" class="clearfix">
+                <el-breadcrumb separator="/">
+                    <el-breadcrumb-item>首页</el-breadcrumb-item>
+                    <el-breadcrumb-item>人力资源</el-breadcrumb-item>
+                    <el-breadcrumb-item>薪酬标准管理</el-breadcrumb-item>
+                    <el-breadcrumb-item>薪酬标准登记</el-breadcrumb-item>
+                </el-breadcrumb>
+                <el-button style="float: right; padding: 3px 0" type="text" v-on:click="tj">提 交</el-button>
+            </div>
+            <div class="text item">
+                <form class="row g-3">
+                    <div class="row g-3">
+                        <div class="col-sm">
+                            <label class="form-label">薪酬标准编号</label>
+                            <input type="text" class="form-control" placeholder="City" aria-label="City" v-model="form.No" readonly="readonly">
+                        </div>
+                        <div class="col-sm">
+                            <label class="form-label">薪酬标准名称</label>
+                            <input type="text" class="form-control" v-model="form.name">
+                        </div>
+                        <div class="col-sm">
+                            <label class="form-label">薪酬总额</label>
+                            <input type="text" class="form-control" name="standard.standardName" id="standardName" readonly="readonly" v-model="form.sum">
+                        </div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-sm">
+                            <label class="form-label">制定人</label>
+                            <select id="inputState" class="form-select" v-model="form.designer" placeholder="请选择制定人">
+                                <option :label="item.u_name" :value="item.u_name" v-for="item in userList"></option>
+                            </select>
+                        </div>
+                        <div class="col-sm">
+                            <label class="form-label">登记人</label>
+                            <input type="text" class="form-control" v-model="form.register" readonly="readonly">
+                        </div>
+                        <div class="col-sm">
+                            <label class="form-label">登记时间</label>
+                            <input type="text" class="form-control" name="standard.registTime" readonly="readonly" v-model="form.regist_time">
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-text">备注</span>
+                        <textarea class="form-control" aria-label="With textarea" v-model="form.Remark"></textarea>
+                    </div>
+                </form>
+                <div class="table-responsive">
+                    <table class="table" v-if="tbt">
+                        <tr v-for="(item,index) in checkedCities">
+                            <td align="center">
+                                {{item.pbc_id}}
+                                <input type="hidden" name="details[0].itemId" value="63">
+                            </td>
+                            <td colspan="3">
+                                {{item.attribute_name}}
+                                <input type="hidden" id="details1" name="details[0].itemName" value="">
+                            </td>
+                            <td>
+                                <input type="text" :id="salary(index)" value="0.00" name="details[0].salary"
+                                       class="INPUT_STYLE2" v-on:input="Nuame()">
+                            </td>
+                        </tr>
+                    </table>
+                    <br />
+                    <br />
+                        <el-button v-on:click="zx" v-if="tbt">重新选择薪酬组成</el-button>
+                        <div v-if="!tbt">
+                            <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" v-on:change="handleCheckAllChange">全选</el-checkbox>
+                            <el-button v-on:click="zc">请选择薪酬组成</el-button>
+                            <div style="margin: 15px 0;"></div>
+                            <el-checkbox-group v-model="checkedCities" v-on:change="handleCheckedCitiesChange">
+                                <el-checkbox v-for="city in Listdate" :label="city" :key="city.pbc_id">{{city.attribute_name}}</el-checkbox>
+                            </el-checkbox-group>
+                        </div>
+                </div>
+                </div>
+        </el-card>
+     
+    </div>
+</body>
+</html>
+  <script type="text/javascript">
+      var vm = new Vue({
+          el: "#app",
+          data: {
+              Listdate: [],
+              checkedCities: [],
+              userList:[],
+              tbt: false,
+              checkAll: false,
+              isIndeterminate: true,
+              form: {
+                  No:"",
+                  name: "",
+                  sum: 0,
+                  designer: "",
+                  register: localStorage.getItem("uname"),
+                  regist_time: "",
+                  Remark: ""
+              }
+          },
+          methods: {
+              find: function () {
+                  axios.get("Salary_itemSelect").then(res => {
+                      this.Listdate = res.data;
+                      console.log(res.data);
+                  }).catch(err => {
+                      console.log(err);
+                  })
+                  axios.get("UserList").then(res => {
+                      this.userList = res.data
+                  }).catch(err => {
+                      console.log(err);
+                  })
+              },
+              salary: function (i) {
+                  return "salary" + (i+1)
+              },
+              tj: function () {
+                  console.log(this.designer);
+                  let item_ids = "";
+                  let item_names = "";
+                  let sumstr = "";
+                  for (var i = 1; i <= this.checkedCities.length; i++) {
+                      var salary = document.getElementById("salary" + i).value;
+                      if (salary == "") {
+                          salary = "0.00";
+                      }
+                      if (i == this.checkedCities.length) {
+                          sumstr += salary;
+                      } else {
+                          sumstr += salary + ",";
+                      }
+                  }
+                  for (var i = 0; i < this.checkedCities.length; i++) {
+                      if (i + 1 == this.checkedCities.length) {
+                          item_ids += this.checkedCities[i].pbc_id;
+                          item_names += this.checkedCities[i].attribute_name;
+                      } else {
+                          item_ids += this.checkedCities[i].pbc_id + ",";
+                          item_names += this.checkedCities[i].attribute_name + ",";
+                      }
+                  }
+                  axios.get("/Salary_scale/Salary_itemADD",
+                      {
+                          params: {
+                              standard_id: this.form.No,
+                              standard_name: this.form.name,
+                              designer: this.form.designer,
+                              register: this.form.register,
+                              regist_time: this.form.regist_time,
+                              remark: this.form.Remark,
+                              salary_sum: this.form.sum,
+                              item_ids: item_ids,
+                              item_names: item_names,
+                              salaries: sumstr,
+                          },
+                   
+                      }).then(res => {
+                          if (Number(res.data) > 0) {
+                              alert("添加成功");
+                              location.href = "salarystandard_register";
+                          }
+                      }).catch(err => {
+                          console.log(err);
+                      })
+              },
+              time: function () {
+                  var d = new Date();
+                  var y = d.getFullYear();
+                  var moth = d.getMonth() + 1;
+                  var date = d.getDate();
+                  var h = d.getHours();
+                  var m = d.getMinutes();
+                  var s = d.getSeconds();
+                  var hh = 20 - 1 - h;
+                  var mm = 60 - 1 - m;
+                  var ss = 60 - s;
+                  if (hh > 0) {
+                      mm = mm + 60 * hh;
+                  }
+                  if (moth < 10) {
+                      moth = "0" + moth;
+                  }
+                  if (date < 10) {
+                      date = "0" + date;
+                  }
+                  if (h < 10) {
+                      h = "0" + h;
+                  }
+                  if (m < 10) {
+                      m = "0" + m;
+                  }
+                  if (s < 10) {
+                      s = "0" + s;
+                  }
+                  if (mm < 10) {
+                      mm = "0" + mm;
+                  }
+                  if (ss < 10) {
+                      ss = "0" + ss;
+                  }
+                  this.form.regist_time = y + "-" + moth + "-" + date + " " + h + ":" + m + ":" + s;
+                  
+              },
+              Nuame: function () {
+                  var sum = 0;
+                  for (var i = 1; i <= this.checkedCities.length; i++) {
+                      var salary = document.getElementById("salary" + i).value;
+                      if (salary == "") {
+                          salary = "0.00";
+                      }
+                      sum = Number(sum) + Number(salary);
+                  }
+                  this.form.sum = sum;
+              },
+              createCode() {
+                  var d = new Date();
+                  var y = d.getFullYear();
+                  var moth = d.getMonth() + 1;
+                  var date = d.getDate();
+                  if (moth < 10) {
+                      moth = "0" + moth;
+                  }
+                  if (date < 10) {
+                      date = "0" + date;
+                  }
+                  var code = '';
+                  var codeLength = 4;
+                  var random = new Array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
+                  for (var i = 0; i < codeLength; i++) {
+                      var index = Math.floor(Math.random() * 9);
+                      code += random[index];
+                  }
+                  this.form.No = "SS"+y + moth + date + code;
+              },
+              handleCheckAllChange(val) {
+                  this.checkedCities = val ? this.Listdate : [];
+                  this.isIndeterminate = false;
+              },
+              handleCheckedCitiesChange(value) {
+                  let checkedCount = value.length;
+                  this.checkAll = checkedCount === this.Listdate.length;
+                  this.isIndeterminate = checkedCount > 0 && checkedCount < this.Listdate.length;
+              },
+              zc: function () {
+                  this.tbt = true;
+
+              },
+              zx:function() {
+                  this.tbt = false;
+              }
+          },
+          mounted: function () {
+              setInterval(this.time, 1000);
+              this.find();
+             
+              this.createCode();
+          }
+      })
+  </script>

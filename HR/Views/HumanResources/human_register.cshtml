@@ -1,0 +1,772 @@
+﻿
+@{
+    Layout = null;
+
+    List<HR.Models.Config_Public_Char> pc = ViewBag.ssssss;
+    List<salary_standard> cs = ViewBag.xia;
+}
+@using Model
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script src="~/Scripts/vue/dist/vue.js"></script>
+    <script src="~/Scripts/element-ui/lib/index.js"></script>
+    <link href="~/Scripts/element-ui/lib/theme-chalk/index.css" rel="stylesheet" />
+    <script src="~/Scripts/axios/dist/axios.js"></script>
+    <link rel="shortcut icon" href="~/static/image/logo/favicon.ico">
+    <link href="~/static/css/app.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #F1F2F7;
+        }
+
+        .TD_STYLE2 {
+            background-color: #F1F2F7 !important;
+        }
+
+        .TD_STYLE1 {
+            background-color: #c0c4cc !important;
+            padding-left: 27px;
+        }
+
+        .TABLE_STYLE1 {
+            background-color: #F1F2F7 !important;
+        }
+
+        .el-textarea {
+            height: 70px;
+        }
+
+        .el-textarea__inner {
+            height: 90px;
+        }
+
+        .avatar-uploader .el-upload {
+            border: 1px dashed #d9d9d9;
+            border-radius: 6px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+            .avatar-uploader .el-upload:hover {
+                border-color: #409EFF;
+            }
+
+        .avatar-uploader-icon {
+            font-size: 28px;
+            color: #8c939d;
+            width: 178px;
+            height: 178px;
+            line-height: 178px;
+            text-align: center;
+        }
+
+        .avatar {
+            width: 178px;
+            height: 178px;
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <el-form ref="form" :model="humanFile" :rules="rules">
+            <table width="100%">
+
+                <el-breadcrumb separator="/" style="font-size:16px;margin-top:27px">
+                    <el-breadcrumb-item :to="{ path: '/' }">人力资源</el-breadcrumb-item>
+                    <el-breadcrumb-item><a href="#">人力资源档案管理</a></el-breadcrumb-item>
+
+                    <el-breadcrumb-item>人力资源档案登记</el-breadcrumb-item>
+                </el-breadcrumb>
+
+                <tr>
+                    <td align="right">
+                        <input type="submit" value="提交" class="BUTTON_STYLE1" v-on:click="tj" />
+                        <input type="reset" value="清除" class="BUTTON_STYLE1" />
+                    </td>
+                </tr>
+            </table>
+            <table width="100%" border="1" cellpadding=3 cellspacing=1
+                   bordercolorlight=#848284 bordercolordark=#eeeeee
+                   class="TABLE_STYLE1">
+                <tr>
+                    <td class="TD_STYLE1" width="11%">
+                        机构
+                    </td>
+                    <td width="14%" class="TD_STYLE2">
+                        <el-cascader v-model="jg"
+                                     style="width: 225px;"
+                                     :options="options"
+                                     :props="{ checkStrictly: true }"
+                                     clearable></el-cascader>
+
+                    <td class="TD_STYLE1">
+                        职位分类/名称
+                    </td>
+                    <td class="TD_STYLE2">
+                        <el-cascader v-model="value"
+                                     class="SELECT_STYLE1"
+                                     :options="oo"
+                                     placeholder="请选择新职位分类/名称"
+                                     clearable></el-cascader>
+                    </td>
+
+                    <td class="TD_STYLE1">
+                        职称
+                    </td>
+                    <td colspan="2" class="TD_STYLE2">
+                        <el-select v-model="valuepcd" placeholder="--请选择--"
+                                   name="humanFile.humanProDesignation" id="humanProDesignation" class="SELECT_STYLE1">
+                            @foreach (HR.Models.Config_Public_Char pp in pc)
+                            {
+                                <el-option value="@pp.attribute_name" label='@pp.attribute_name'>@pp.attribute_name</el-option>
+                            }
+                        </el-select>
+                    </td>
+                    <td rowspan="4" width="13%" style="text-align: center;">
+                        <el-upload class="avatar-uploader"
+                                   action="/HumanResources/WSC"
+                                   :show-file-list="false"
+                                   :on-success="handleAvatarSuccess"
+                                   :before-upload="beforeAvatarUpload">
+                            <img v-if="imageUrl" :src="imageUrl" class="avatar">
+                            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                        </el-upload>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="TD_STYLE1">
+                        姓名
+                    </td>
+                    <td class="TD_STYLE2">
+                        <el-input type="text" v-model="humanFile.humanName" value="admin" class="INPUT_STYLE2">
+                    </td>
+                    <td class="TD_STYLE1">
+                        性别
+                    </td>
+                    <td class="TD_STYLE2">
+                        <el-select v-model="humanFile.humanSex" class="SELECT_STYLE1">
+                            <el-option v-for="item in options1"
+                                       :key="item.value"
+                                       :label="item.label"
+                                       :value="item.value">
+                            </el-option>
+                        </el-select>
+                    </td>
+                    <td class="TD_STYLE1">
+                        EMAIL
+                    </td>
+                    <td colspan="2" class="TD_STYLE2">
+                        <el-input type="text" v-model="humanFile.humanEmail" value="admin" class="INPUT_STYLE2">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TD_STYLE1">
+                        电话
+                    </td>
+                    <td class="TD_STYLE2">
+                        <el-input type="text" v-model="humanFile.humanTelephone" value="admin" class="INPUT_STYLE2">
+                    </td>
+                    <td class="TD_STYLE1">
+                        QQ
+                    </td>
+                    <td class="TD_STYLE2">
+                        <el-input type="text" v-model="humanFile.humanQq" value="admin" class="INPUT_STYLE2">
+                    </td>
+                    <td class="TD_STYLE1">
+                        手机
+                    </td>
+                    <td colspan="2" class="TD_STYLE2">
+                        <el-input type="text" v-model="humanFile.humanMobilephone" value="admin" class="INPUT_STYLE2">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TD_STYLE1">
+                        住址
+                    </td>
+                    <td colspan="3" class="TD_STYLE2">
+                        <el-input type="text" v-model="humanFile.humanAddress" value="admin" class="INPUT_STYLE2">
+                    </td>
+                    <td class="TD_STYLE1">
+                        邮编
+                    </td>
+                    <td colspan="2" class="TD_STYLE2">
+                        <el-input type="text" v-model="humanFile.humanPostcode" value="admin" class="INPUT_STYLE2">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TD_STYLE1">
+                        国籍
+                    </td>
+                    <td class="TD_STYLE2">
+                        <el-select v-model="humanFile.humanNationality" style="width: 225px;">
+                            <el-option v-for="item in options2"
+                                       :key="item.value1"
+                                       :label="item.label1"
+                                       :value="item.value1">
+                            </el-option>
+                        </el-select>
+                    </td>
+                    <td class="TD_STYLE1">
+                        出生地
+                    </td>
+                    <td class="TD_STYLE2">
+                        <el-input type="text" v-model="humanFile.humanBirthplace" value="admin" class="INPUT_STYLE2">
+                    </td>
+                    <td class="TD_STYLE1">
+                        生日
+                    </td>
+                    <td width="13%" class="TD_STYLE2">
+                        <el-date-picker v-model="humanFile.humanBirthday"
+                                        type="date"
+                                        placeholder="选择日期">
+                        </el-date-picker>
+                    </td>
+                    <td width="11%" class="TD_STYLE1">
+                        民族
+                    </td>
+                    <td class="TD_STYLE2" width="14%">
+                        <el-select v-model="humanFile.humanRace" style="width: 225px;">
+                            <el-option v-for="item in options3"
+                                       :key="item.value2"
+                                       :label="item.label2"
+                                       :value="item.value2">
+                            </el-option>
+                        </el-select>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TD_STYLE1">
+                        宗教信仰
+                    </td>
+                    <td class="TD_STYLE2">
+                        <el-select v-model="humanFile.humanReligion" style="width: 225px;">
+                            <el-option v-for="item in options4"
+                                       :key="item.value3"
+                                       :label="item.label3"
+                                       :value="item.value3">
+                            </el-option>
+                        </el-select>
+                    </td>
+                    <td class="TD_STYLE1">
+                        政治面貌
+                    </td>
+                    <td class="TD_STYLE2">
+                        <el-select v-model="humanFile.humanParty" class="SELECT_STYLE1">
+                            <el-option v-for="item in options5"
+                                       :key="item.value4"
+                                       :label="item.label4"
+                                       :value="item.value4">
+                            </el-option>
+                        </el-select>
+                    </td>
+                    <td class="TD_STYLE1">
+                        身份证号码
+                    </td>
+                    <td class="TD_STYLE2">
+                        <el-input type="text" v-model="humanFile.humanIdCard" value="admin" class="INPUT_STYLE2">
+                    </td>
+                    <td class="TD_STYLE1">
+                        社会保障号码
+                    </td>
+                    <td class="TD_STYLE2">
+                        <el-input type="text" v-model="humanFile.humanSocietySecurityId" value="admin" class="INPUT_STYLE2">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TD_STYLE1">
+                        年龄
+                    </td>
+                    <td class="TD_STYLE2">
+                        <el-input type="text" v-model="humanFile.humanAge" value="admin" class="INPUT_STYLE2">
+                    </td>
+                    <td class="TD_STYLE1">
+                        学历
+                    </td>
+                    <td class="TD_STYLE2">
+                        <el-select v-model="humanFile.humanEducatedDegree" class="SELECT_STYLE1">
+                            <el-option v-for="item in options6"
+                                       :key="item.value5"
+                                       :label="item.label5"
+                                       :value="item.value5">
+                            </el-option>
+                        </el-select>
+                    </td>
+                    <td class="TD_STYLE1">
+                        教育年限
+                    </td>
+                    <td class="TD_STYLE2">
+                        <el-select v-model="humanFile.humanEducatedYears" style="width: 225px;">
+                            <el-option v-for="item in options7"
+                                       :key="item.value6"
+                                       :label="item.label6"
+                                       :value="item.value6">
+                            </el-option>
+                        </el-select>
+                    </td>
+                    <td class="TD_STYLE1">
+                        学历专业
+                    </td>
+                    <td class="TD_STYLE2">
+                        <el-select v-model="humanFile.humanEducatedMajor" style="width: 225px;">
+                            <el-option v-for="item in options8"
+                                       :key="item.value7"
+                                       :label="item.label7"
+                                       :value="item.value7">
+                            </el-option>
+                        </el-select>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TD_STYLE1">
+                        薪酬标准
+                    </td>
+                    <td class="TD_STYLE2">
+                        <el-select v-model="value2" placeholder="请选择新薪酬标准" class="INPUT_STYLE2" v-on:change="xin" style="width: 225px;">
+
+                            <el-option v-for="item in oo1"
+                                       :key="item.standard_id"
+                                       :label="item.standard_name"
+                                       :value="item.standard_id">
+                            </el-option>
+
+                        </el-select>
+                    </td>
+                    <td class="TD_STYLE1">
+                        开户行
+                    </td>
+                    <td class="TD_STYLE2">
+                        <el-input type="text" v-model="humanFile.humanBank" value="admin" class="INPUT_STYLE2">
+                    </td>
+                    <td class="TD_STYLE1">
+                        帐号
+                    </td>
+                    <td class="TD_STYLE2">
+                        <el-input type="text" v-model="humanFile.humanAcount" value="admin" class="INPUT_STYLE2">
+                    </td>
+                    <td class="TD_STYLE1">
+                        登记人
+                    </td>
+                    <td class="TD_STYLE2">
+                        <el-input type="text" v-model="humanFile.register" value="admin" class="INPUT_STYLE2" readonly="readonly">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TD_STYLE1">
+                        建档时间
+                    </td>
+                    <td class="TD_STYLE2">
+                        <el-input type="text" name="majorChange.registTime" readonly="readonly"
+                                  id="Tdate" class="INPUT_STYLE2">
+
+                    </td>
+                    <td class="TD_STYLE1">
+                        特长
+                    </td>
+                    <td class="TD_STYLE2">
+                        <el-select v-model="humanFile.humanSpeciality" class="SELECT_STYLE1">
+                            <el-option v-for="item in options10"
+                                       :key="item.value9"
+                                       :label="item.label9"
+                                       :value="item.value9">
+                            </el-option>
+                        </el-select>
+                    </td>
+                    <td class="TD_STYLE1">
+                        爱好
+                    </td>
+                    <td class="TD_STYLE2">
+                        <el-select v-model="humanFile.humanHobby" style="width: 225px;">
+                            <el-option v-for="item in options11"
+                                       :key="item.value10"
+                                       :label="item.label10"
+                                       :value="item.value10">
+                            </el-option>
+                        </el-select>
+                    </td>
+                    <td class="TD_STYLE1">
+                        &nbsp;
+                    </td>
+                    <td class="TD_STYLE2">
+                        &nbsp;
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TD_STYLE1">
+                        个人履历
+                    </td>
+                    <td colspan="7" class="TD_STYLE2">
+                        <el-form-item prop="humanHistroyRecords">
+                            <el-input v-model="humanFile.humanHistroyRecords" type="textarea"></el-input>
+                        </el-form-item>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TD_STYLE1">
+                        家庭关系信息
+                    </td>
+                    <td colspan="7" class="TD_STYLE2">
+                        <el-form-item prop="humanFamilyMembership">
+                            <el-input v-model="humanFile.humanFamilyMembership" type="textarea"></el-input>
+                        </el-form-item>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TD_STYLE1">
+                        备注
+                    </td>
+                    <td colspan="7" class="TD_STYLE2">
+                        <el-form-item prop="remark">
+                            <el-input v-model="humanFile.remark" type="textarea"></el-input>
+                        </el-form-item>
+                    </td>
+                </tr>
+            </table>
+        </el-form>
+    </div>
+    <SCRIPT type="text/javascript">
+        function time() {
+            var tdate = document.getElementById("Tdate");
+            var d = new Date();
+            var y = d.getFullYear();
+            var moth = d.getMonth() + 1;
+            var date = d.getDate();
+            var h = d.getHours();
+            var m = d.getMinutes();
+            var s = d.getSeconds();
+            var hh = 20 - 1 - h;
+            var mm = 60 - 1 - m;
+            var ss = 60 - s;
+            if (hh > 0) {
+                mm = mm + 60 * hh;
+            }
+            if (moth < 10) {
+                moth = "0" + moth;
+            }
+            if (date < 10) {
+                date = "0" + date;
+            }
+            if (h < 10) {
+                h = "0" + h;
+            }
+            if (m < 10) {
+                m = "0" + m;
+            }
+            if (s < 10) {
+                s = "0" + s;
+            }
+            if (mm < 10) {
+                mm = "0" + mm;
+            }
+            if (ss < 10) {
+                ss = "0" + ss;
+            }
+
+            tdate.value = y + "-" + moth + "-" + date + " " + h + ":" + m + ":" + s;
+
+
+        }
+        window.onload = time;
+        var out = window.setInterval(time, 1000);
+    </SCRIPT>
+    <script type="text/javascript">
+        var vm = new Vue({
+            el: "#app",
+            data: {
+                humanFile: {
+                    firstKindId: "",
+                    secondKindId: "",
+                    thirdKindId: "",
+                    majorKindId: "",
+                    majorId: "",
+                    humanProDesignation: "",
+                    humanName: "",
+                    humanSex: "",
+                    humanEmail: "",
+                    humanTelephone: "",
+                    humanQq: "",
+                    humanMobilephone: "",
+                    humanAddress: "",
+                    humanPostcode: "",
+                    humanNationality: "",
+                    humanBirthplace: "",
+                    humanBirthday: "",
+                    humanRace: "",
+                    humanReligion: "",
+                    humanParty: "",
+                    humanIdCard: "",
+                    humanSocietySecurityId: "",
+                    humanAge: "",
+                    humanEducatedDegree: "",
+                    humanEducatedYears: "",
+                    humanEducatedMajor: "",
+                    salaryStandardId: "",
+                    humanBank: "",
+                    humanAcount: "",
+                    register: "",
+                    registTime: "",
+                    humanSpeciality: "",
+                    humanHobby: "",
+                    humanHistroyRecords: "",
+                    humanFamilyMembership: "",
+                    remark: "",
+
+                },
+                value: "",
+                jg:"",
+                value2:"",
+                valuemid: "",
+                valuemkid: "",
+                valuecf: "",
+                valuesk: "",
+                valuefk: "",
+                valuepcd: "",
+                value1: "",
+        img:"",
+                options: [],
+                oo: [],
+                oo1: [],
+                zong: "",
+                bz: "",
+                bzbh: "",
+                imageUrl:"",
+                options1: [{
+                    value: '男',
+                    label: '男'
+                }, {
+                    value: '女',
+                    label: '女'
+                    },],
+                options2: [{
+                        value1: '中国',
+                        label1: '中国'
+                    }, {
+                        value1: '美国',
+                        label1: '美国'
+                    },],
+                options3: [{
+                    value2: '回族',
+                    label2: '回族'
+                }, {
+                    value2: '汉族',
+                    label2: '汉族'
+                    },],
+                options4: [{
+                    value3: '佛教',
+                    label3: '佛教'
+                }, {
+                    value3: '基督教',
+                    label3: '基督教'
+                    },],
+                options5: [{
+                    value4: '群众',
+                    label4: '群众'
+                }, {
+                    value4: '党员',
+                    label4: '党员'
+                    },],
+                options6: [{
+                    value5: '高中',
+                    label5: '高中'
+                }, {
+                    value5: '本科',
+                    label5: '本科'
+                }, {
+                    value5: '大专',
+                    label5: '大专'
+                    },],
+                options7: [{
+                    value6: '12',
+                    label6: '12'
+                }, {
+                    value6: '9',
+                    label6: '9'
+                    },],
+                options8: [{
+                    value7: '生物工程',
+                    label7: '生物工程'
+                }, {
+                    value7: '计算机',
+                    label7: '计算机'
+                    },],
+
+                options10: [{
+                    value9: 'JAVA',
+                    label9: 'JAVA'
+                }, {
+                    value9: '数据库',
+                    label9: '数据库'
+                    },],
+                options11: [{
+                    value10: '篮球',
+                    label10: '篮球'
+                }, {
+                    value10: '跳舞',
+                    label10: '跳舞'
+                },],
+                rules: {
+
+                }
+            },
+            methods: {
+
+                handleAvatarSuccess(res, file) {
+                    this.imageUrl = URL.createObjectURL(file.raw);
+                    this.img = res;
+                },
+                beforeAvatarUpload(file) {
+                    const isJPG = file.type === 'image/jpeg';
+                    const isLt2M = file.size / 1024 / 1024 < 2;
+
+                    if (!isJPG) {
+                        this.$message.error('上传头像图片只能是 JPG 格式!');
+                    }
+                    if (!isLt2M) {
+                        this.$message.error('上传头像图片大小不能超过 2MB!');
+                    }
+                    return isJPG && isLt2M;
+                },
+
+                tj: function () {
+                    var t = this;
+
+                    var tt = document.getElementById("Tdate").value;
+
+                            axios.get('/HumanResources/HMInsert', {
+                                params: {
+                                    first_kind_id: t.jg[0],
+                                    second_kind_id: t.jg[1],
+                                    third_kind_id: t.jg[2],
+                                    human_major_kind_id: t.value[0],
+                                    human_major_id: t.value[1],
+                                    human_pro_designation : t.valuepcd,
+                                    human_name : t.humanFile.humanName,
+                                    human_sex : t.humanFile.humanSex,
+                                    human_email : t.humanFile.humanEmail,
+                                    human_telephone : t.humanFile.humanTelephone,
+                                    human_qq : t.humanFile.humanQq,
+                                    human_mobilephone : t.humanFile.humanMobilephone,
+                                    human_address : t.humanFile.humanAddress,
+                                    human_postcode : t.humanFile.humanPostcode,
+                                    human_nationality : t.humanFile.humanNationality,
+                                    human_birthplace : t.humanFile.humanBirthplace,
+                                    human_birthday : t.humanFile.humanBirthday,
+                                    human_race : t.humanFile.humanRace,
+                                    human_religion : t.humanFile.humanReligion,
+                                    human_party : t.humanFile.humanParty,
+                                    human_id_card : t.humanFile.humanIdCard,
+                                    human_society_security_id : t.humanFile.humanSocietySecurityId,
+                                    human_age : t.humanFile.humanAge,
+                                    human_educated_degree : t.humanFile.humanEducatedDegree,
+                                    human_educated_years : t.humanFile.humanEducatedYears,
+                                    human_educated_major: t.humanFile.humanEducatedMajor,
+                                    salary_standard_id: t.bzbh,
+                                    salary_standard_name: t.bz,
+                                    salary_sum: t.zong,
+                                    human_bank : t.humanFile.humanBank,
+                                    human_account : t.humanFile.humanAcount,
+                                    register : t.humanFile.register,
+                                    regist_time : tt,
+                                    human_speciality : t.humanFile.humanSpeciality,
+                                    human_hobby : t.humanFile.humanHobby,
+                                    human_histroy_records : t.humanFile.humanHistroyRecords,
+                                    human_family_membership : t.humanFile.humanFamilyMembership,
+                                    remark: t.humanFile.remark,
+                                    human_picture: this.img,
+                                    ii:@Html.Raw(Json.Encode(ViewBag.xi.res_id)),
+                                }
+                            })
+                                .then(res => {
+                                    if (res.data > 0) {
+                                        alert("添加成功！")
+                                        location.href = '/HumanResources/FindList';
+                                    } else {
+                                        alert("失败！")
+                                    }
+                                })
+                                .catch(err => {
+                                    console.log(err);
+                                })
+
+
+                },
+                xin(value) {
+
+                    axios.get('/Transfer/Cx', {
+                        params: {
+                            id: value
+
+                        }
+                    })
+                        .then(res => {
+
+                            this.zong = res.data.Salary_sum
+                            this.bz = res.data.Standard_name;
+                            this.bzbh = res.data.Standard_id;
+
+                        }).catch(err => {
+                            console.log(err);
+                        })
+                },
+                ee: function () {
+
+                    this.oo1 =@Html.Raw(Json.Encode(cs));
+                    this.humanFile.humanName =@Html.Raw(Json.Encode(ViewBag.xi.human_name));
+                    this.humanFile.humanSex =@Html.Raw(Json.Encode(ViewBag.xi.human_sex));
+                    this.humanFile.humanEmail =@Html.Raw(Json.Encode(ViewBag.xi.human_email));
+                    this.humanFile.humanTelephone =@Html.Raw(Json.Encode(ViewBag.xi.human_telephone));
+                    this.humanFile.humanMobilephone =@Html.Raw(Json.Encode(ViewBag.xi.human_mobilephone));
+                    this.humanFile.humanAddress =@Html.Raw(Json.Encode(ViewBag.xi.human_address));
+                    this.humanFile.humanPostcode =@Html.Raw(Json.Encode(ViewBag.xi.human_postcode));
+                    this.humanFile.humanHobby =@Html.Raw(Json.Encode(ViewBag.xi.human_hobby));
+                    this.humanFile.humanSpeciality =@Html.Raw(Json.Encode(ViewBag.xi.human_specility));
+                    this.humanFile.humanReligion =@Html.Raw(Json.Encode(ViewBag.xi.human_religion));
+                    this.humanFile.humanParty =@Html.Raw(Json.Encode(ViewBag.xi.human_party));
+                    this.humanFile.humanRace =@Html.Raw(Json.Encode(ViewBag.xi.human_race));
+                    this.humanFile.humanNationality =@Html.Raw(Json.Encode(ViewBag.xi.human_nationality));
+                    this.humanFile.humanBirthday =@Html.Raw(Json.Encode(ViewBag.xi.human_birthday));
+                    this.humanFile.humanAge =@Html.Raw(Json.Encode(ViewBag.xi.human_age));
+                    this.humanFile.humanEducatedDegree =@Html.Raw(Json.Encode(ViewBag.xi.human_educated_degree));
+                    this.humanFile.humanEducatedYears =@Html.Raw(Json.Encode(ViewBag.xi.human_educated_years));
+                    this.humanFile.humanEducatedMajor =@Html.Raw(Json.Encode(ViewBag.xi.human_educated_major));
+                    this.humanFile.humanBirthplace =@Html.Raw(Json.Encode(ViewBag.xi.human_birthplace));
+                    this.humanFile.humanIdCard =@Html.Raw(Json.Encode(ViewBag.xi.human_idcard));
+                    this.humanFile.humanHistroyRecords =@Html.Raw(Json.Encode(ViewBag.xi.human_history_records));
+                    this.humanFile.remark =@Html.Raw(Json.Encode(ViewBag.xi.remark));
+                    let sz = [];
+                sz.push(@Html.Raw(Json.Encode(ViewBag.xi.human_major_kind_id)));
+                sz.push(@Html.Raw(Json.Encode(ViewBag.xi.human_major_id)));
+                this.value = sz;
+
+                    axios.get('Xia1')
+                        .then(res => {
+                            this.oo = res.data;
+
+                        })
+                        .catch(err => {
+                            console.log(err);
+                        })
+                    axios.get('/Transfer/LeveFind')
+                        .then(res => {
+                            this.options = res.data;
+                        })
+                        .catch(err => {
+                            console.log(err);
+                        })
+                },
+            },
+            mounted: function () {
+                this.ee();
+                this.humanFile.register = localStorage.getItem("UNAME");
+            }
+        })
+    </script>
+</body>
+</html>

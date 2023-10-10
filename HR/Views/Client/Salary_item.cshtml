@@ -1,0 +1,95 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Level</title>
+    <link href="~/Scripts/css/table.css" rel="stylesheet" />
+    <script src="~/Scripts/vue/dist/vue.js"></script>
+    <script src="~/Scripts/element-ui/lib/index.js"></script>
+    <link href="~/Scripts/element-ui/lib/theme-chalk/index.css" rel="stylesheet" />
+    <script src="~/Scripts/axios/dist/axios.js"></script>
+</head>
+<body>
+    <div id="app">
+        <form method="post" action="../customiz/customizAction!findFirstKind">
+            <table width="100%">
+                <tr>
+                    <td>
+                        <font color="black">
+                            您正在做的业务是：人力资源--客户化设置--薪酬管理设置--薪酬项目设置
+                        </font>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="right">
+                        <input type="button" value="添加" class="BUTTON_STYLE1"
+                               onclick="window.location.href='/Client/Salary_itemAddview'" />
+                    </td>
+                </tr>
+            </table>
+            <el-table :data="tableData"
+                      border
+                      style="width: 100%"
+                      :cell-style="{ textAlign: 'center' }"
+                      :header-cell-style="{textAlign: 'center'}">
+                <el-table-column prop="attribute_name"
+                                 label="薪酬项目名称"
+                                 width="900px">
+                </el-table-column>
+                <el-table-column label="删除">
+                    <template slot-scope="scope">
+                        <el-button size="mini" type="danger" v-on:click="Del(scope.row.pbc_id)">删除</el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+        </form>
+    </div>
+</body>
+</html>
+<script type="text/javascript">
+    var vm = new Vue({
+        el: "#app",
+        data: {
+            tableData: []
+        },
+        methods: {
+            find: function () {
+                axios.get("/Client/Salary_itemSelect").then(res => {
+                    this.tableData = res.data;
+                }).catch(err => {
+                    console.log(err);
+                })
+            },
+            Del: function (id) {
+                if (confirm("是否确删除")) {
+                    axios.get("/Client/Salary_itemDel", {
+                        params: {
+                            name: id
+                        }
+                    }).then(res => {
+                        if (res.data == "1") {
+                            alert("添加成功")
+                            this.find();
+
+                        } else {
+                            alert("添加失败")
+                        }
+
+                    }).catch(err => {
+                        console.log(err);
+                    })
+                }
+            }
+        }
+        ,
+        mounted: function(){
+            this.find();
+        }
+    })
+</script>

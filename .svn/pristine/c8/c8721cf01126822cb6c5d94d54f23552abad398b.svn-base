@@ -1,0 +1,140 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>salarystandard_check_list</title>
+    <link href="~/Scripts/css/table.css" rel="stylesheet" />
+    <script type="text/javascript" src="~/Scripts/javascript/jquery-1.7.2.js"></script>
+    <script src="~/Scripts/vue/dist/vue.js"></script>
+    <script src="~/Scripts/element-ui/lib/index.js"></script>
+    <link href="~/Scripts/element-ui/lib/theme-chalk/index.css" rel="stylesheet" />
+    <script src="~/Scripts/axios/dist/axios.js"></script>
+    <style type="text/css">
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <table width="100%">
+            <tr>
+                <td>
+                    <font color="black">您正在做的业务是:人力资源管理--薪酬标准管理--薪酬标准登记查询</font>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    &nbsp;
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    当前等待复核的薪酬标准总数:
+                    {{Totalnumber}}
+                    例
+                </td>
+            </tr>
+        </table>
+        <el-table :data="tableData"
+                  border
+                  style="width: 100%"
+                  :cell-style="{ textAlign: 'center' }"
+                  :header-cell-style="{textAlign: 'center'}">
+            <el-table-column prop="standard_id"
+                             label="薪酬标准编号"
+                             width="250px">
+                <template slot-scope="scope">
+                    <a href="#" v-on:click="cx(scope.row.standard_id)">{{scope.row.standard_id}}</a>
+                    </template>
+            </el-table-column>
+            <el-table-column prop="standard_name"
+                             label="薪酬标准名称"
+                             width="250px">
+            </el-table-column>
+            <el-table-column prop="designer"
+                             label="制定人"
+                             width="250px">
+            </el-table-column>
+            <el-table-column prop="regist_time"
+                             label="登记时间"
+                             width="300px">
+                <template slot-scope="{ row }">
+                    {{ row.regist_time | ftime }}
+                </template>
+            </el-table-column>
+            <el-table-column prop="salary_sum"
+                             label="薪酬总额"
+                             width="235px">
+            </el-table-column>
+        </el-table>
+        <el-pagination v-on:size-change="handleSizeChange"
+                       v-on:current-change="handleCurrentChange"
+                       :current-page="currentPage"
+                       :page-sizes="[3, 6,9]"
+                       :page-size="pagesize"
+                       layout="total, sizes, prev, pager, next, jumper"
+                       :total="Totalnumber"
+                       style="padding-left: 30%; padding-top: 10px;">
+        </el-pagination>
+    </div>
+</body>
+</html>
+<script type="text/javascript">
+    var vm = new Vue({
+        el: "#app",
+        data: {
+            tableData: [],
+            currentPage: 1,
+            pagesize: 3,
+            Totalnumber: 0,
+            where: "",
+        },
+        methods: {
+            find: function () {
+                axios.get("/Salary_scale/salarystandard_queryFind", {
+                    params: {
+                        currentPage: this.currentPage,
+                        pageSize: this.pagesize,
+                        where: this.where,
+                    }
+                }).then(res => {
+                    this.tableData = res.data.CList;
+                    this.Totalnumber = res.data.Totalnumber;
+                }).catch(err => {
+                    console.log(err);
+                })
+            },
+            handleSizeChange(val) {
+                this.pagesize = val;
+                this.find();
+            },
+            handleCurrentChange(val) {
+                this.currentPage = val;
+                this.find();
+            },
+            cx: function (id) {
+                location.href = "salarystandard_queryIdFind?No=" + id;
+            }
+        },
+        mounted: function () {
+           
+            this.where =@Html.Raw(Json.Encode(@ViewBag.s));
+            this.find();
+        },
+        filters: {
+            ftime: function (value) {
+                if (value == '/Date(-62135596800000)/') {
+                    return '空'
+                }
+                var dt = new Date(parseInt(value.replace("/Date(", "").replace(")/", ""), 10));
+                return dt.getFullYear() + "-" + (dt.getMonth() + 1) + "-" + dt.getDate();
+            }
+        }
+
+    })
+</script>

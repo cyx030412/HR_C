@@ -1,0 +1,6 @@
+E:\.net\HR\Model\bin\Debug\Model.dll
+E:\.net\HR\Model\bin\Debug\Model.pdb
+E:\.net\HR\Model\obj\Debug\Model.csproj.AssemblyReference.cache
+E:\.net\HR\Model\obj\Debug\Model.csproj.CoreCompileInputs.cache
+E:\.net\HR\Model\obj\Debug\Model.dll
+E:\.net\HR\Model\obj\Debug\Model.pdb

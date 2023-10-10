@@ -1,0 +1,103 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>salarystandard_change_list</title>
+    <link rel="stylesheet" href="~/Scripts/css/table.css" type="text/css">
+    <link rel="stylesheet" type="text/css" media="all"
+          href="~/Scripts/javascript/calendar/calendar-win2k-cold-1.css">
+    <script type="text/javascript" src="~/Scripts/javascript/calendar/cal.js"></script>
+    <script type="text/javascript" src="~/Scripts/javascript/comm/comm.js"></script>
+    <script type="text/javascript" src="~/Scripts/javascript/comm/list.js"></script>
+    <script type="text/javascript" src="~/Scripts/javascript/jquery-1.7.2.js"></script>
+    <script type="text/javascript" src="~/Scripts/javascript/calendar-ch.js"></script>
+    <script type="text/javascript" src="~/Scripts/javascript/comm/time.js"></script>
+    <script src="~/Scripts/vue/dist/vue.js"></script>
+    <script src="~/Scripts/axios/dist/axios.js"></script>
+    <link rel="stylesheet" href="~/Scripts/css/cwcalendar.css" type="text/css">
+</head>
+<body>
+    <div id="app">
+        <form method="post" action="salarystandard_query_list.html">
+            <input type="hidden" name="page.startPage" value="0">
+            <table width="100%">
+                <tr>
+                    <td>
+                        <font color="black">您正在做的业务是:人力资源管理--薪酬标准管理--薪酬标准登记变更</font>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div align="right">
+                            <input type="button" value="查询" class="BUTTON_STYLE1" v-on:click="tj"/>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            <table width="100%" border="1" cellpadding=0 cellspacing=1
+                   bordercolorlight=#848284 bordercolordark=#eeeeee
+                   class="TABLE_STYLE2">
+                <tr>
+                    <td width="20%" class="TD_STYLE1">
+                        请输入薪酬标准编号
+                    </td>
+                    <td class="TD_STYLE2">
+                        <input type="text" name="standard.standardId" v-model="Id"
+                               class="INPUT_STYLE1">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TD_STYLE1">
+                        请输入关键字
+                    </td>
+                    <td class="TD_STYLE2">
+                        <input type="text" name="utilbean.primarKey" class="INPUT_STYLE1" v-model="name">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TD_STYLE1">
+                        请输入建档时间
+                    </td>
+                    <td width="84%" class="TD_STYLE2">
+                        <input name="utilbean.startDate" onclick="aa('utilbean.startDate')" type="text" class="INPUT_STYLE2" id="date_start" style="width:24% " v-model="Qtime" size="30">
+                        至 <input type="text" name="utilbean.endDate" onclick="aa('utilbean.endDate')" style="width:24% " class="INPUT_STYLE2" id="date_end" >
+                        （YYYY-MM-DD）
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</body>
+</html>
+<script type="text/javascript">
+    var vm = new Vue({
+        el: "#app",
+        data: {
+            Id: "",
+            name: "",
+            Qtime: "",
+        },
+        methods: {
+            tj: function () {
+                var Mtime = document.getElementById("date_end");
+                let where = " change_status=2 ";
+                if (this.Id != "") {
+                    where += " and standard_id LIKE CONCAT('%','" + this.Id + "','%')";
+                }
+                if (this.name != "") {
+                    where += " and standard_name LIKE CONCAT('%','" + this.name + "','%')";
+                }
+                if (this.Qtime != "" && Mtime.value != "") {
+                    where += " and regist_time between '" + this.Qtime + "'  and  '" + Mtime.value +"'";
+                }
+                location.href = "salarystandard_query?where=" + where;
+            }
+        }
+    })
+        </script>

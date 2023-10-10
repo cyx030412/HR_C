@@ -1,0 +1,86 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>salarystandard_query_locate</title>
+    <link rel="stylesheet" href="~/Scripts/css/table.css" type="text/css">
+    <link rel="stylesheet" type="text/css" media="all"
+          href="~/Scripts/javascript/calendar/calendar-win2k-cold-1.css">
+    <script type="text/javascript" src="~/Scripts/javascript/calendar/cal.js"></script>
+    <script type="text/javascript" src="~/Scripts/javascript/comm/comm.js"></script>
+    <script type="text/javascript" src="~/Scripts/javascript/comm/list.js"></script>
+    <script type="text/javascript" src="~/Scripts/javascript/jquery-1.7.2.js"></script>
+    <script type="text/javascript" src="~/Scripts/javascript/calendar-ch.js"></script>
+    <script type="text/javascript" src="~/Scripts/javascript/comm/time.js"></script>
+    <script src="~/Scripts/vue/dist/vue.js"></script>
+    <script src="~/Scripts/element-ui/lib/index.js"></script>
+    <link href="~/Scripts/element-ui/lib/theme-chalk/index.css" rel="stylesheet" />
+    <script src="~/Scripts/axios/dist/axios.js"></script>
+    <link rel="stylesheet" href="~/Scripts/css/cwcalendar.css" type="text/css">
+    <link rel="shortcut icon" href="~/static/image/logo/favicon.ico">
+    <link href="~/static/css/app.min.css" rel="stylesheet">
+</head>
+<body>
+    <div id="app">
+        <el-card class="box-card">
+            <div slot="header" class="clearfix">
+                <el-breadcrumb separator="/">
+                    <el-breadcrumb-item>首页</el-breadcrumb-item>
+                    <el-breadcrumb-item>人力资源管理</el-breadcrumb-item>
+                    <el-breadcrumb-item>薪酬标准管理</el-breadcrumb-item>
+                    <el-breadcrumb-item>薪酬标准变更</el-breadcrumb-item>
+                </el-breadcrumb>
+                <el-button style="float: right; padding: 3px 0" type="text" v-on:click="tj">查 询</el-button>
+            </div>
+            <div class="text item">
+                <div class="mb-3">
+                    <label for="formGroupExampleInput" class="form-label">请输入薪酬标准编号</label>
+                    <input type="text" class="form-control" id="formGroupExampleInput" v-model="Id">
+                </div>
+                <div class="mb-3">
+                    <label for="formGroupExampleInput" class="form-label">请输入关键字</label>
+                    <input type="text" class="form-control" id="formGroupExampleInput" v-model="name">
+                </div>
+                <div class="mb-3">
+                    <label for="formGroupExampleInput" class="form-label">请输入建档时间</label>
+                    <input name="utilbean.startDate" onclick="aa('utilbean.startDate')" type="text" class="form-control" id="date_start" style="width:24% " size="30">
+                    至 <input type="text" name="utilbean.endDate" onclick="aa('utilbean.endDate')" style="width:24% " class="form-control" id="date_end">
+                    （YYYY-MM-DD）
+                </div>
+            </div>
+        </el-card>
+    </div>
+</body>
+</html>
+<script type="text/javascript">
+    var vm = new Vue({
+        el: "#app",
+        data: {
+            Id: "",
+            name: "",
+        },
+        methods: {
+            tj: function () {
+                var Mtime = document.getElementById("date_end");
+                var Qtime = document.getElementById("date_start");
+                let where = " change_status=1 ";
+                if (this.Id != "") {
+                    where += " and standard_id LIKE CONCAT('%','" + this.Id + "','%')";
+                }
+                if (this.name != "") {
+                    where += " and standard_name LIKE CONCAT('%','" + this.name + "','%')";
+                }
+                if (Qtime != "" && Mtime.value != "") {
+                    where += " and regist_time between '" + Qtime.value + "'  and  '" + Mtime.value + "'";
+                }
+                location.href = "salarystandard_change_list?where=" + where;
+            }
+        }
+    })
+</script>

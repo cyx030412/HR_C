@@ -1,0 +1,389 @@
+﻿
+@{
+    Layout = null;
+}
+@using Model
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>register</title>
+    <link href="~/Scripts/css/table.css" rel="stylesheet" />
+    <script type="text/javascript" src="~/Scripts/javascript/jquery-1.7.2.js"></script>
+    <script src="~/Scripts/vue/dist/vue.js"></script>
+    <script src="~/Scripts/element-ui/lib/index.js"></script>
+    <link href="~/Scripts/element-ui/lib/theme-chalk/index.css" rel="stylesheet" />
+    <script src="~/Scripts/axios/dist/axios.js"></script>
+    <style>
+    </style>
+</head>
+<body>
+    <div id="app">
+        @{ human_file hf = ViewBag.hf;}
+        <form action="register_success.html">
+            <table width="100%">
+                <tr>
+                    <td>
+                        <font color="#0000CC">您正在做的业务是:人力资源--调动管理--调动登记</font>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td align="right">
+                        <input type="button" value="提交" class="BUTTON_STYLE1"
+                                v-on:click="tj">
+                        <input type="button" class="BUTTON_STYLE1"
+                               onclick="javascript:window.history.back();" value="返回">
+                    </td>
+                </tr>
+            </table>
+            <table width="100%" border="1" cellpadding=0 cellspacing=1
+                   bordercolorlight=#848284 bordercolordark=#eeeeee
+                   class="TABLE_STYLE1">
+                <tr height="21">
+                    <td class="TD_STYLE1" width="8%">
+                        档案编号
+                    </td>
+                    <td class="TD_STYLE2" width="10%">
+                        <input type="text" name="majorChange.humanId" readonly="readonly"
+                               value=" @hf.human_id" class="INPUT_STYLE2">
+
+                    </td>
+                    <td class="TD_STYLE1" width="8%">
+                        姓名
+                    </td>
+                    <td class="TD_STYLE2" width="10%">
+                        <input type="text" name="majorChange.humanName"
+                               value="@hf.human_name" readonly="readonly"
+                               class="INPUT_STYLE2">
+                    </td>
+                    <td class="TD_STYLE1" width="8%">
+                    </td>
+                    <td class="TD_STYLE2" width="10%">
+                    </td>
+                    <td class="TD_STYLE1" width="8%">
+                    </td>
+                    <td class="TD_STYLE2" width="10%">
+                    </td>
+                </tr>
+                <tr>
+
+                    <td class="TD_STYLE1" width="8%">
+                        原一级机构
+                    </td>
+                    <td class="TD_STYLE2">
+                        <input type="text" name="majorChange.firstKindName"
+                                readonly="readonly" value="@hf.first_kind_name"
+                               class="INPUT_STYLE2">
+                    </td>
+                    <td class="TD_STYLE1" width="8%">
+                        原二级机构
+                    </td>
+                    <td class="TD_STYLE2" width="10%">
+                        <input type="text" name="majorChange.secondKindName"
+                                readonly="readonly" value="@hf.second_kind_name"
+                               class="INPUT_STYLE2">
+                    </td>
+                    <td class="TD_STYLE1" width="8%">
+                        原三级机构
+                    </td>
+                    <td class="TD_STYLE2" width="10%">
+                        <input type="text" name="majorChange.thirdKindName"
+                               readonly="readonly" value="@hf.third_kind_name"
+                               class="INPUT_STYLE2">
+                    </td>
+                    <td class="TD_STYLE1" width="8%">
+                    </td>
+                    <td class="TD_STYLE2" width="10%">
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="TD_STYLE1">
+                        原职位分类
+                    </td>
+                    <td class="TD_STYLE2">
+                        <input type="text" name="majorChange.majorKindName"
+                               value="@hf.human_major_kind_name" readonly="readonly"
+                               class="INPUT_STYLE2">
+                    </td>
+                    <td class="TD_STYLE1" width="12%">
+                        原职位名称
+                    </td>
+                    <td class="TD_STYLE2">
+                        <input type="text" name="majorChange.majorName"
+                               value="@hf.hunma_major_name" readonly="readonly"
+                               class="INPUT_STYLE2">
+                     
+                    </td>
+                    <td class="TD_STYLE1">
+                        原薪酬标准
+                    </td>
+                    <td class="TD_STYLE2">
+                        <input type="text" name="majorChange.salaryStandardName"
+                               value="@hf.salary_standard_name"
+                               readonly="readonly" class="INPUT_STYLE2">
+                    
+                    </td>
+                    <td class="TD_STYLE1">
+                        原薪酬总额
+                    </td>
+                    <td class="TD_STYLE2">
+                        <input type="text" name="majorChange.salarySum"
+                               value="@hf.salary_sum" readonly="readonly"
+                               class="INPUT_STYLE2">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TD_STYLE1">
+                        新I/II/III级机构名称
+                    </td>
+                    <td class="TD_STYLE2">
+                        <el-cascader :options="options"
+                                     :props="{ checkStrictly: true }"
+                                     v-model="vlist"
+                                     ref="cascaderMallCatergory"
+                                     clearable></el-cascader>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TD_STYLE1">
+                        新职位分类
+                    </td>
+                    <td class="TD_STYLE2">
+                        <el-select v-model="CMK" placeholder="请选择新职位分类" v-on:change="CMKCHE" value-key="major_kind_id">
+                            <el-option v-for="item in CMKList" :label="item.major_kind_name" :value="item" :key="item.major_kind_id"></el-option>
+                        </el-select>
+                    </td>
+                    <td class="TD_STYLE1" width="12%">
+                        新职位名称
+                    </td>
+                    <td class="TD_STYLE2">
+                        <el-select v-model="CM" placeholder="请选择新职位" value-key="major_id">
+                            <el-option v-for="item in CMList" :label="item.major_name" :value="item" :key="item.major_name"></el-option>
+                        </el-select>
+                    </td>
+                    <td class="TD_STYLE1">
+                        新薪酬标准
+                    </td>
+                    <td class="TD_STYLE2">
+                        <el-select v-model="SS" placeholder="请选择" v-on:change="SSCHE()" value-key="standard_id">
+                            <el-option v-for="item in SSList" :label="item.standard_name" :value="item" :key="item.standard_id"></el-option>
+                        </el-select>
+                    </td>
+                    <td class="TD_STYLE1">
+                        新薪酬总额
+                    </td>
+                    <td class="TD_STYLE2">
+                        <input type="text" name="majorChange.newSalarySum" id="newSalarySum" readonly="readonly"
+                               v-model="SSum" class="INPUT_STYLE2">
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="TD_STYLE1">
+                        登记人
+                    </td>
+                    <td class="TD_STYLE2">
+                        <input type="text" name="majorChange.register" readonly="readonly" v-model="name"
+                               class="INPUT_STYLE2">
+                    </td>
+                    <td class="TD_STYLE1">
+                        登记时间
+                    </td>
+                    <td class="TD_STYLE2">
+                        <input type="text" name="majorChange.registTime" readonly="readonly" v-model="regist_time"
+                               id="Tdate" class="INPUT_STYLE2">
+                    </td>
+                    <td class="TD_STYLE1">
+                    </td>
+                    <td class="TD_STYLE2">
+                    </td>
+                    <td class="TD_STYLE1">
+                    </td>
+                    <td class="TD_STYLE2">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TD_STYLE1">
+                        调动原因
+                    </td>
+                    <td colspan="7" class="TD_STYLE2">
+                        <textarea name="majorChange.changeReason" rows="6" class="TEXTAREA_STYLE1" v-model="reason"></textarea>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</body>
+</html>
+<script type="text/javascript">
+    var vm = new Vue({
+        el: "#app",
+        data: {
+            HFid: "",
+            //一二三级
+            options: [],
+            vlist: [],
+            //职位分类
+            CMK: "",
+            CMKList: [],
+            //职务
+            CM: "",
+            CMList: [],
+            //薪酬标准
+            SS: "",
+            SSum:"",
+            SSList: [],
+            //登记人
+            name: localStorage.getItem("uname"),
+            //调动原因
+            reason: "",
+            regist_time:"",
+        },
+        methods: {
+            find: function () {
+                axios.get("LeveFind").then(res => {
+                    this.options = res.data;
+
+                }).catch(err => {
+                    console.log(err);
+                })
+                //职位分类
+                axios.get("FindCMK").then(res => {
+                    this.CMKList = res.data;
+                    console.log(res.data);
+                }).catch(err => {
+                    console.log(err);
+                })
+                //薪资
+                axios.get("FindSS").then(res => {
+                    this.SSList = res.data;
+                }).catch(err => {
+                    console.log(err);
+                })
+            },
+            CMKCHE: function () {
+                this.CM="";
+                axios.get("FindCM", {
+                    params: {
+                        Cid: this.CMK.major_kind_id
+                    }
+                }).then(res => {
+                    this.CMList = res.data;
+                }).catch(err => {
+                    console.log(err);
+                })
+            },
+            SSCHE: function () {
+                this.SSum = "";
+                for (var i = 0; i < this.SSList.length; i++) {
+                    if (this.SSList[i].standard_id == this.SS.standard_id) {
+                        this.SSum = this.SSList[i].salary_sum;
+                    }
+                }
+            },
+
+            //提交
+            tj: function () {
+                if (this.vlist.length == 0) {
+                    alert("请选择机构");
+                    return;
+                }
+                let arr = this.$refs['cascaderMallCatergory'].getCheckedNodes()[0].pathLabels;
+                axios.get("CheckInsert", {
+                    params: {
+                        first_kind_id:@Html.Raw(Json.Encode(@hf.first_kind_id)),
+                        first_kind_name:@Html.Raw(Json.Encode(@hf.first_kind_name)),
+                        second_kind_id:@Html.Raw(Json.Encode(@hf.second_kind_id)),
+                        second_kind_name:@Html.Raw(Json.Encode(@hf.second_kind_name)),
+                        third_kind_id:@Html.Raw(Json.Encode(@hf.third_kind_id)),
+                        third_kind_name:@Html.Raw(Json.Encode(@hf.third_kind_name)),
+                        major_kind_id:@Html.Raw(Json.Encode(@hf.human_major_kind_id)),
+                        major_kind_name:@Html.Raw(Json.Encode(@hf.human_major_kind_name)),
+                        human_major_id:@Html.Raw(Json.Encode(@hf.human_major_id)),
+                        major_name:@Html.Raw(Json.Encode(@hf.hunma_major_name)),
+                        major_id:@Html.Raw(Json.Encode(@hf.human_major_id)),
+                        new_first_kind_id: this.vlist[0],
+                        new_first_kind_name: arr[0],
+                        new_second_kind_id: this.vlist[1] = undefined ? null : this.vlist[1],
+                        new_second_kind_name: arr[1] = undefined ? null : arr[1],
+                        new_third_kind_id: this.vlist[2] = undefined ? null : this.vlist[2],
+                        new_third_kind_name: arr[2] = undefined ? null : arr[2],
+                        new_major_kind_id: this.CMK.major_kind_id,
+                        new_major_kind_name: this.CMK.major_kind_name,
+                        new_major_id: this.CM.major_id,
+                        new_major_name: this.CM.major_name,
+                        human_id:@Html.Raw(Json.Encode(@hf.human_id)),
+                        human_name:@Html.Raw(Json.Encode(@hf.human_name)),
+                        human_name:@Html.Raw(Json.Encode(@hf.human_name)),
+                        salary_standard_id: @Html.Raw(Json.Encode(@hf.salary_standard_id)),
+                        salary_standard_name: @Html.Raw(Json.Encode(@hf.salary_standard_name)),
+                        salary_sum: @Html.Raw(Json.Encode(@hf.salary_sum)),
+                        new_salary_standard_id: this.SS.standard_id,
+                        new_salary_standard_name: this.SS.standard_name,
+                        new_salary_sum: this.SSum,
+                        change_reason: this.reason,
+                        register: this.name,
+                        regist_time: this.regist_time
+                    }
+                }).then(res => {
+                    if (res.data == "1") {
+                        alert("调动登记成功，请记得复核！！");
+                        location.href = "/Transfer/register_locate";
+                    } else {
+                        alert("调动登记失败，请联系客服！！");
+                        location.href = " /Transfer/register_locate";
+                    }
+
+                }).catch(err => {
+                    console.log(err);
+                })
+            },
+            time: function () {
+                var d = new Date();
+                var y = d.getFullYear();
+                var moth = d.getMonth() + 1;
+                var date = d.getDate();
+                var h = d.getHours();
+                var m = d.getMinutes();
+                var s = d.getSeconds();
+                var hh = 20 - 1 - h;
+                var mm = 60 - 1 - m;
+                var ss = 60 - s;
+                if (hh > 0) {
+                    mm = mm + 60 * hh;
+                }
+                if (moth < 10) {
+                    moth = "0" + moth;
+                }
+                if (date < 10) {
+                    date = "0" + date;
+                }
+                if (h < 10) {
+                    h = "0" + h;
+                }
+                if (m < 10) {
+                    m = "0" + m;
+                }
+                if (s < 10) {
+                    s = "0" + s;
+                }
+                if (mm < 10) {
+                    mm = "0" + mm;
+                }
+                if (ss < 10) {
+                    ss = "0" + ss;
+                }
+                this.regist_time = y + "-" + moth + "-" + date + " " + h + ":" + m + ":" + s;
+
+            },
+        },
+
+        mounted: function () {
+            this.find();
+            setInterval(this.time, 1000);
+        }
+    })
+</script>

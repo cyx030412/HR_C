@@ -1,0 +1,96 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script src="~/Scripts/vue/dist/vue.js"></script>
+    <script src="~/Scripts/element-ui/lib/index.js"></script>
+    <link href="~/Scripts/element-ui/lib/theme-chalk/index.css" rel="stylesheet" />
+    <script src="~/Scripts/axios/dist/axios.js"></script>
+
+
+</head>
+<body>
+    <div id="app">
+        <el-card class="box-card">
+            <div slot="header" class="clearfix">
+                <el-breadcrumb separator="/">
+                    <el-breadcrumb-item>首页</el-breadcrumb-item>
+                    <el-breadcrumb-item>人力资源</el-breadcrumb-item>
+                    <el-breadcrumb-item>人力资源档案管理设置</el-breadcrumb-item>
+                    <el-breadcrumb-item>公共属性设置</el-breadcrumb-item>
+                </el-breadcrumb>
+                <p style="float: right; padding: 10px 0;">
+                    <input type="button" value="添加" class="BUTTON_STYLE1"
+                           onclick="window.location.href='/Client/ggsxxz ';">
+                </p>
+            </div>
+            <div class="text item">
+                <el-table :data="table"
+                          style="width: 100%">
+                    <el-table-column prop="attribute_kind"
+                                     label="属性种类"
+                                     width="500">
+                    </el-table-column>
+                    <el-table-column prop="attribute_name"
+                                     label="属性名称"
+                                     width="500">
+                    </el-table-column>
+                    <el-table-column label="操作">
+
+                        <template slot-scope="scope">
+                            <el-button size="mini" type="danger" v-on:click="remove(scope.row.pbc_id)">删除</el-button>
+                        </template>
+
+                    </el-table-column>
+
+                </el-table>
+
+            </div>
+            </el-card>
+            </div>
+            <script type="text/javascript">
+                var vm = new Vue({
+                    el: "#app",
+                    data: {
+                        table: [],
+                    }, methods: {
+                        //公共属性查询
+                        fill: function () {
+                            axios.get('/Client/Index')
+                                .then(res => {
+                                    console.log(res);
+                                    this.table = res.data;
+                                })
+                        },
+                        //公共属性删除
+                        remove(id) {
+                            console.log(id);
+                            var t = this;
+                            if (confirm("确定删除此数据吗？")) {
+                                axios.get('/Client/GGDelete?pbc_id=' + id).then(res => {
+                                    console.log(res.data);
+                                    if (res.data == "1") {
+                                        alert('删除成功');
+                                        t.fill();
+
+
+                                    } else {
+                                        alert('删除失败！');
+                                    }
+                                })
+                            }
+                        }
+                    }, mounted: function () {
+                        this.fill();
+                    }
+                })
+            </script>
+</body>
+</html>

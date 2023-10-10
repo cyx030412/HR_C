@@ -1,0 +1,111 @@
+﻿using Dapper;
+using Model;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Dao
+{
+    public class human_fileDao
+    {
+        string constr = "Data Source=DESKTOP-9EC5BJ1;Initial Catalog=HR_DB;Integrated Security=True";
+        public async Task<IEnumerable<human_file>> FindAsync(string ssid)
+        {
+            using (SqlConnection con = new SqlConnection(constr))
+            {
+                string sql = $@"SELECT * FROM [dbo].[human_file] WHERE salary_standard_id='{ssid}'";
+                return await con.QueryAsync<human_file>(sql);
+            }
+        }
+        //计算 总人数
+        public async Task<string> FindSum(string ssid)
+        {
+            using (SqlConnection con=new SqlConnection(constr))
+            {
+                string sql = $@"SELECT COUNT(0) FROM [dbo].[human_file] WHERE salary_standard_id='{ssid}' and check_status = 0";
+                string dore= await con.QueryFirstAsync<string>(sql);
+                if (dore == null)
+                {
+                    dore = "0";
+                }
+                return dore;
+
+            }
+        }
+        //计算 薪酬金额
+        public async Task<string> FindMoney(string ssid)
+        {
+            using (SqlConnection con = new SqlConnection(constr))
+            {
+                string sql = $@"SELECT sum(salary_sum) FROM [dbo].[human_file] WHERE salary_standard_id='{ssid}' and check_status = 0";
+                string dore = await con.QueryFirstAsync<string>(sql);
+                if (dore == null)
+                {
+                    dore = "0";
+                }
+                return dore;
+            }
+        }
+        //查询数据 分页
+        public async Task<FenYe<human_file>> FindFenYeAsync(FenYe<human_file> fy , string where)
+        {
+            using (SqlConnection con=new SqlConnection(constr))
+            {
+                DynamicParameters dp = new DynamicParameters();
+                dp.Add("@pageSize", fy.pageSize);
+                dp.Add("@keyName", "huf_id");
+                dp.Add("@tableName", "human_file");
+                dp.Add("@currentPage", fy.currentPage);
+                dp.Add("@where", where);
+                dp.Add("@rows", 0, DbType.Int32, ParameterDirection.Output);
+                FenYe<human_file> feye = new FenYe<human_file>();
+                feye.CList = await con.QueryAsync<human_file>("proc_Fenye", dp, commandType: CommandType.StoredProcedure);
+                int zts = dp.Get<int>("@rows");
+                feye.Totalnumber = zts;
+                feye.Totalpage = zts % fy.pageSize == 0 ? zts / fy.pageSize : zts / fy.pageSize + 1;
+                return feye;
+            }
+        }
+
+        //查询单条信息
+        public async Task<human_file> FindFHidAsync(string fhid)
+        {
+            using (SqlConnection con = new SqlConnection(constr))
+            {
+                string sql = $@"SELECT * FROM [dbo].[human_file]  WHERE human_id='{fhid}'";
+                return await con.QueryFirstAsync<human_file>(sql);
+            }
+        }
+        //查询一级 档案数据
+        public async Task<IEnumerable<human_file>> FindLeve1(string leveid)
+        {
+            using (SqlConnection con = new SqlConnection(constr))
+            {
+                string sql = $@"SELECT * from  [dbo].[human_file] WHERE first_kind_id='{leveid}' and second_kind_id is null and PayrollStatus = 0";
+                return await con.QueryAsync<human_file>(sql);
+            }
+        }
+        //查询二级 档案数据
+        public async Task<IEnumerable<human_file>> FindLeve2(string leveid)
+        {
+            using (SqlConnection con = new SqlConnection(constr))
+            {
+                string sql = $@"SELECT * from  [dbo].[human_file] WHERE second_kind_id='{leveid}' and third_kind_id is null and PayrollStatus = 0";
+                return await con.QueryAsync<human_file>(sql);
+            }
+        }
+        //查询三级 档案数据
+        public async Task<IEnumerable<human_file>> FindLeve3(string leveid)
+        {
+            using (SqlConnection con = new SqlConnection(constr))
+            {
+                string sql = $@"SELECT * from  [dbo].[human_file] WHERE third_kind_id='{leveid}' and PayrollStatus = 0";
+                return await con.QueryAsync<human_file>(sql);
+            }
+        }
+    }
+}

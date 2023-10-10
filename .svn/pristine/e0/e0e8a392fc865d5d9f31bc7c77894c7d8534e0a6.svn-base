@@ -1,0 +1,122 @@
+﻿
+@{
+    Layout = null;
+}
+@using Model
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link href="~/Scripts/css/table.css" rel="stylesheet" />
+    <script src="~/Scripts/javascript/comm/comm.js"></script>
+    <script src="~/Scripts/vue/dist/vue.js"></script>
+    <script src="~/Scripts/element-ui/lib/index.js"></script>
+    <link href="~/Scripts/element-ui/lib/theme-chalk/index.css" rel="stylesheet" />
+</head>
+<body>
+    <div id="app">
+        @{ config_file_second_kind leve2 = ViewBag.s;}
+        <form action="second_kind_change_success.html" method="post">
+            <input type="hidden" id="firstKindName" name="cfsk.firstKindName">
+            <table width="100%">
+                <tr>
+                    <td>
+                        <font color="black">
+                            您正在做的业务是：人力资源--客户化设置--人力资源档案管理设置--II级机构设置--II级机构添加
+                        </font>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="right">
+                        <input type="button" value="提交" class="BUTTON_STYLE1" v-on:click="find">
+                        <input type="button" value="返回" class="BUTTON_STYLE1"
+                               onclick="history.back();">
+                    </td>
+                </tr>
+            </table>
+
+
+            <table width="100%" border="1" cellpadding=0 cellspacing=1
+                   bordercolorlight=#848284 bordercolordark=#eeeeee
+                   class="TABLE_STYLE1">
+                <tr>
+                    <td width="19%" class="TD_STYLE1">
+                        I级机构名称
+                    </td>
+                    <td width="81%" class="TD_STYLE2">
+                        <input type="text" name="cfsk.firstKindName" readonly="readonly" class="INPUT_STYLE1" value="@leve2.first_kind_name">
+                    </td>
+                </tr>
+                <tr>
+                    <td width="19%" class="TD_STYLE1">
+                        II级机构编号
+                    </td>
+                    <td width="81%" class="TD_STYLE2">
+                        <input type="text" name="cfsk.secondKindId" readonly="readonly" class="INPUT_STYLE1" value="@leve2.second_kind_id">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TD_STYLE1">
+                        II级机构名称
+                    </td>
+                    <td class="TD_STYLE2">
+                        <input type="text" name="cfsk.secondKindName" readonly="readonly" class="INPUT_STYLE1" value="@leve2.second_kind_name">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TD_STYLE1">
+                        薪酬发放责任人编号（多个编号之间请用"半角逗号"加"一个空格"隔开，如", "）
+                    </td>
+                    <td class="TD_STYLE2">
+                        <textarea rows="4" cols="120" name="cfsk.secondSalaryId" class="TEXTAREA_STYLE1" v-model="xbh"></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TD_STYLE1">
+                        销售责任人编号（多个编号之间请用"半角逗号"加"一个空格"隔开，如", "）
+                    </td>
+                    <td class="TD_STYLE2">
+                        <textarea rows="4" cols="120" name="cfsk.secondSalaryId" class="TEXTAREA_STYLE1" v-model="sbh"></textarea>
+                    </td>
+                </tr>
+            </table>
+           </form>
+    </div>
+</body>
+</html>
+<script>
+    var vm = new Vue({
+        el: "#app",
+        data: {
+            xbh: "",
+            sbh: "",
+            Kid: "",
+        },
+        methods: {
+            find() {
+                axios.get("/Client/Leve2Update", {
+                    params: {
+                        second_kind_id: this.Kid,
+                        second_sale_id: this.sbh,
+                        second_salary_id: this.xbh,
+                    }
+                }).then(res => {
+                    if (res.data == "1") {
+                        location.href = "Leve2";
+                        alert("修改成功")
+                    } else {
+                        location.href = "Leve2";
+                        alert("修改失败")
+                    }
+                }).catch(err => {
+                    console.log(err);
+                })
+            }
+        },
+        mounted: function () {
+            this.xbh =@Html.Raw(Json.Encode(leve2.second_salary_id));
+            this.sbh =@Html.Raw(Json.Encode(leve2.second_sale_id));
+            this.Kid=@Html.Raw(Json.Encode(leve2.second_kind_id));
+        }
+    })
+</script>

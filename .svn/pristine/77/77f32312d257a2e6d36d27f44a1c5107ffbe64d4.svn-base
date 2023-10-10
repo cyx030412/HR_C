@@ -1,0 +1,166 @@
+﻿
+@{
+    Layout = null;
+    IEnumerable<Model.config_file_first_kind> leveList = ViewBag.s;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Leve3Select</title>
+    <link href="~/Scripts/css/table.css" rel="stylesheet" />
+    <script src="~/Scripts/javascript/comm/comm.js"></script>
+    <script src="~/Scripts/vue/dist/vue.js"></script>
+    <script src="~/Scripts/element-ui/lib/index.js"></script>
+    <link href="~/Scripts/element-ui/lib/theme-chalk/index.css" rel="stylesheet" />
+    <script src="~/Scripts/axios/dist/axios.js"></script>
+    <style type="text/css">
+        .el-input__inner {
+            background-color: #FFFFCC;
+        }
+
+        .el-textarea__inner {
+            background-color: #FFFFCC;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <form action="third_kind_register_success.html" method="post">
+            <table width="100%">
+                <tr>
+                    <td>
+                        <font color="black">
+                            您正在做的业务是：人力资源--客户化设置--人力资源档案管理设置--III级机构设置--III级机构添加
+                        </font>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="right">
+                        <input type="button" value="提交" class="BUTTON_STYLE1" v-on:click="find">
+                        <input type="button" value="返回" class="BUTTON_STYLE1"
+                               onclick="history.back();">
+                    </td>
+                </tr>
+            </table>
+
+            <table width="100%" border="1" cellpadding=0 cellspacing=1
+                   bordercolorlight=#848284 bordercolordark=#eeeeee
+                   class="TABLE_STYLE1">
+                <tr>
+                    <td width="19%" class="TD_STYLE1">
+                        I级机构名称
+                    </td>
+                    <td width="81%" class="TD_STYLE2">
+                        <el-select v-model="form.region" placeholder="请选择I级机构名称" v-on:change="IIselect()">
+                            @foreach (var item in leveList)
+                            {
+                                <el-option label="@item.first_kind_name" value="@item.first_kind_id"></el-option>
+                            }
+                        </el-select>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="19%" class="TD_STYLE1">
+                        II级机构名称
+                    </td>
+                    <td width="81%" class="TD_STYLE2">
+                        <el-select v-model="form.region2" placeholder="请选择II级机构名称">
+                            <el-option v-for="item in IIList"  :label="item.second_kind_name" :value="item.second_kind_id"></el-option>
+                        </el-select>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="19%" class="TD_STYLE1">
+                        III级机构编号
+                    </td>
+                    <td width="81%" class="TD_STYLE2">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TD_STYLE1">
+                        III级机构名称
+                    </td>
+                    <td class="TD_STYLE2">
+                        <input type="text" class="INPUT_STYLE1" name="cftk.thirdKindName" v-model="form.name"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TD_STYLE1">
+                        销售责任人编号（多个编号之间请用"半角逗号"加"一个空格"隔开，如", "）
+                    </td>
+                    <td class="TD_STYLE2">
+                        <textarea rows="4" cols="120" class="TEXTAREA_STYLE1" name="cftk.thirdKindSaleId" v-model="form.xbh"></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TD_STYLE1">
+                        是否为零售店（是/否）
+                    </td>
+                    <td class="TD_STYLE2">
+                        <select name="cftk.thirdKindIsRetail" v-model="form.bole">
+                            <option value="是">是</option>
+                            <option value="否">否</option>
+                        </select>
+
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</body>
+</html>
+<script>
+    var vm = new Vue({
+        el: "#app",
+        data: {
+            IIList:[]
+            ,
+            form: {
+                bole: "是",
+                xbh: "",
+                name: "",
+                region: "",
+                region2:""
+            }
+        },
+        methods: {
+            find() {
+                axios.get("/Client/Leve3Insert", {
+                    params: {
+                        first_kind_id: this.form.region,
+                        second_kind_id: this.form.region2,
+                        third_kind_name: this.form.name,
+                        third_kind_sale_id: this.form.xbh,
+                        third_kind_is_retail: this.form.bole
+                    }
+                }).then(res => {
+                    if (res.data == "1") {
+                        location.href = "Leve3";
+                        alert("添加成功")
+                    } else {
+                        location.href = "Leve3";
+                        alert("添加失败")
+                    }
+                }).catch(err => {
+                    console.log(err);
+                })
+            }
+            ,
+            IIselect() {
+                this.form.region2 = "";
+                axios.get("/Client/Leve3IIIFind?Iid=" + this.form.region)
+                .then(res => {
+                    this.IIList = res.data;
+                }).catch(err => {
+                    console.log(err);
+                })
+            }
+        },
+        mounted: function () {
+
+        }
+    })
+</script>

@@ -1,0 +1,139 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>right_list</title>
+    <link href="~/Scripts/css/table.css" rel="stylesheet" />
+    <script type="text/javascript" src="~/Scripts/javascript/jquery-1.7.2.js"></script>
+    <script src="~/Scripts/vue/dist/vue.js"></script>
+    <script src="~/Scripts/element-ui/lib/index.js"></script>
+    <link href="~/Scripts/element-ui/lib/theme-chalk/index.css" rel="stylesheet" />
+    <script src="~/Scripts/axios/dist/axios.js"></script>
+</head>
+<body>
+    <div id="app">
+        <table width="100%">
+            <tr>
+                <td>
+                    <font color="black">您正在做的业务是：人力资源--权限管理--角色管理 </font>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    当前角色总数：8例
+                </td>
+            </tr>
+            <tr>
+                <td align="right">
+                    <input type="button" value="添加角色" class="BUTTON_STYLE1" onclick="location.href='right_add'">
+                </td>
+            </tr>
+        </table>
+        <el-table :data="list"
+                  border
+                  style="width: 100%"
+                  :cell-style="{ textAlign: 'center' }"
+                  :header-cell-style="{textAlign: 'center'}">
+            <el-table-column prop="RolesID"
+                             label="角色编号"
+                             width="250px">
+            </el-table-column>
+            <el-table-column prop="RolesName"
+                             label="角色名称"
+                             width="250px">
+            </el-table-column>
+            <el-table-column prop="RolesInstruction"
+                             label="角色说明"
+                             width="250px">
+            </el-table-column>
+            <el-table-column prop="RolesIf"
+                             label="是否可用"
+                             width="250px">
+                <template slot-scope="scope">
+                    <p v-if=" scope.row.RolesIf == 1">可用</p>
+                    <p v-if=" scope.row.RolesIf == 0">不可用</p>
+                </template>
+            </el-table-column>
+            <el-table-column label="操作">
+                <template slot-scope="scope">
+                    <img src="~/Scripts/images/bt_edit.gif" title="编辑" style="cursor:pointer;" v-on:click="upd(scope.row.RolesID)" />
+                    <img src="~/Scripts/images/bt_del.gif" title="删除" style="cursor:pointer;" v-on:click="del(scope.row.RolesID)" />
+                </template>
+            </el-table-column>
+        </el-table>
+        <el-pagination v-on:size-change="handleSizeChange"
+                       v-on:current-change="handleCurrentChange"
+                       :current-page="currentPage"
+                       :page-sizes="[3, 6,9]"
+                       :page-size="pagesize"
+                       layout="total, sizes, prev, pager, next, jumper"
+                       :total="Totalnumber"
+                       style="padding-left: 30%; padding-top: 10px;">
+        </el-pagination>
+
+    </div>
+</body>
+</html>
+<script type="text/javascript">
+    var vm = new Vue({
+        el: "#app",
+        data() {
+            return {
+                list: [],
+                currentPage: 1,
+                pagesize: 3,
+                Totalnumber: 0,
+            };
+        },
+        methods: {
+            find() {
+                axios.get("/user/FindFyRoles", {
+                    params: {
+                        currentPage: this.currentPage,
+                        pageSize: this.pagesize,
+                    }
+                }).then(res => {
+                    this.list = res.data.CList;
+                    this.Totalnumber = res.data.Totalnumber;
+                }).catch(err => {
+                    console.log(err);
+                })
+            },
+            handleSizeChange(val) {
+                this.pagesize = val;
+                this.find();
+            },
+            handleCurrentChange(val) {
+                this.currentPage = val;
+                this.find();
+            },
+            del: function (id) {
+                if (confirm("是否确删除")) {
+                    axios.get("/User/DelR?id=" + id).then(res => {
+                        if (res.data == "1") {
+                            alert("恭喜您，删除成功了！");
+                            this.currentPage = 1;
+                            this.find();
+                        } else {
+                            alert("该角色正在使用中，请处理后在进行操作！！")
+                        }
+                    }).catch(err => {
+                        console.log(err);
+                    })
+                }
+            },
+            upd: function (id) {
+                location.href = "right_list_information?rid=" + id;
+            }
+        },
+        mounted() {
+            this.find();
+        }
+    })
+</script>

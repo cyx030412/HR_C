@@ -1,0 +1,124 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>check_list</title>
+    <script type="text/javascript" src="~/Scripts/javascript/jquery-1.7.2.js"></script>
+    <script src="~/Scripts/vue/dist/vue.js"></script>
+    <script src="~/Scripts/element-ui/lib/index.js"></script>
+    <link href="~/Scripts/element-ui/lib/theme-chalk/index.css" rel="stylesheet" />
+    <script src="~/Scripts/axios/dist/axios.js"></script>
+    <link href="~/Scripts/css/table.css" rel="stylesheet" />
+</head>
+<body>
+    <div id="app">
+        <table width="100%">
+            <tr>
+                <td>
+                    <font color="black">您正在做的业务是：人力资源--调动管理--调动审核列表</font>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    &nbsp;
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    当前待复核的调动人数:{{list.length}}
+                    例
+                </td>
+            </tr>
+        </table>
+        <el-table :data="list"
+                  border
+                  style="width: 100%"
+                  :cell-style="{ textAlign: 'center' }"
+                  :header-cell-style="{textAlign: 'center'}">
+            <el-table-column prop="first_kind_name"
+                             label="I级机构"
+                             width="250px">
+            </el-table-column>
+            <el-table-column prop="second_kind_name"
+                             label="II级机构"
+                             width="250px">
+            </el-table-column>
+            <el-table-column prop="third_kind_name"
+                             label="III级机构"
+                             width="250px">
+            </el-table-column>
+            <el-table-column prop="salary_standard_name"
+                             label="薪酬标准"
+                             width="250px">
+            </el-table-column>
+            <el-table-column prop="human_name"
+                             label="名称"
+                             width="200px">
+            </el-table-column>
+            <el-table-column label="审核">
+                <template slot-scope="scope">
+                    <el-button size="mini" v-on:click="td(scope.row.mch_id)">审核</el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+        <el-pagination v-on:size-change="handleSizeChange"
+                       v-on:current-change="handleCurrentChange"
+                       :current-page="currentPage"
+                       :page-sizes="[3, 6,9]"
+                       :page-size="pagesize"
+                       layout="total, sizes, prev, pager, next, jumper"
+                       :total="Totalnumber"
+                       style="padding-left: 30%; padding-top: 10px;">
+        </el-pagination>
+    </div>
+</body>
+</html>
+<script type="text/javascript">
+    var vm = new Vue({
+        el: "#app",
+        data() {
+            return {
+                list: [],
+                currentPage: 1,
+                pagesize: 3,
+                Totalnumber: 0,
+            };
+        },
+        methods: {
+            find() {
+                axios.get("FindFH", {
+                    params: {
+                        currentPage: this.currentPage,
+                        pageSize: this.pagesize,
+                        where: this.where
+                    }
+                }).then(res => {
+                    this.list = res.data.CList;
+                    this.Totalnumber = res.data.Totalnumber;
+                }).catch(err => {
+                    console.log(err);
+                })
+            },
+            handleSizeChange(val) {
+                this.pagesize = val;
+                this.find();
+            },
+            handleCurrentChange(val) {
+                this.currentPage = val;
+                this.find();
+            },
+            td: function (id) {
+                location.href = "check?id=" + id;
+            }
+        },
+        mounted() {
+            this.find();
+        }
+    })
+    </script>

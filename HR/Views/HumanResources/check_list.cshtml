@@ -1,0 +1,122 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet"
+          href="../../css/table.css" type="text/css" />
+
+    <script src="~/Scripts/vue/dist/vue.js"></script>
+    <script src="~/Scripts/element-ui/lib/index.js"></script>
+    <link href="~/Scripts/element-ui/lib/theme-chalk/index.css" rel="stylesheet" />
+    <script src="~/Scripts/axios/dist/axios.js"></script>
+    <style>
+        body {
+            background-color: #F1F2F7;
+        }
+
+        .TD_STYLE2 {
+            background-color: #F1F2F7 !important;
+        }
+
+        .TD_STYLE1 {
+            background-color: #c0c4cc !important;
+        }
+
+        .TABLE_STYLE1 {
+            background-color: #F1F2F7 !important;
+        }
+
+        .el-button--danger {
+            color: rgb(255, 255, 255);
+            background-color: #2A3542;
+            border-color: #2A3542;
+        }
+
+            .el-button--danger:focus, .el-button--danger:hover {
+                color: rgb(255, 255, 255);
+                background-color: #2A3542;
+                border-color: #2A3542;
+            }
+    </style>
+</head>
+<body>
+
+    <div id="app">
+        <el-card class="box-card">
+            <div slot="header" class="clearfix">
+                <el-breadcrumb separator="/">
+                    <el-breadcrumb-item>首页</el-breadcrumb-item>
+                    <el-breadcrumb-item>人力资源档案管理</el-breadcrumb-item>
+                    <el-breadcrumb-item>人力资源档案登记复核</el-breadcrumb-item>
+                </el-breadcrumb>
+            </div>
+            <div class="text item">
+
+                <el-table :data="table"
+                          stripe
+                          style="width: 100%">
+                    <el-table-column prop="human_id"
+                                     label="档案编号">
+                    </el-table-column>
+                    <el-table-column prop="human_name"
+                                     label="姓名">
+                    </el-table-column>
+                    <el-table-column prop="human_sex"
+                                     label="性别">
+                    </el-table-column>
+                    <el-table-column prop="first_kind_name"
+                                     label="I级机构">
+                    </el-table-column>
+                    <el-table-column prop="second_kind_name"
+                                     label="II级机构">
+                    </el-table-column>
+                    <el-table-column prop="third_kind_name"
+                                     label="III级机构">
+                    </el-table-column>
+                    <el-table-column prop="human_pro_designation"
+                                     label="职称">
+                    </el-table-column>
+                    <el-table-column label="操作">
+                        <template slot-scope="scope">
+                            <el-button size="mini"
+                                       type="danger"
+                                       v-on:click="fh(scope.row)">复核</el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+                </div>
+            </el-card>
+            </div>
+            <script type="text/javascript">
+                var vm = new Vue({
+                    el: "#app",
+                    data: {
+                        table: [],
+                    },
+                    methods: {
+                        fill: function () {
+                            axios.get('/HumanResources/FindFH')
+                                .then(res => {
+                                    this.table = res.data;
+                                })
+                                .catch(err => {
+                                    console.log(err);
+                                })
+                        },
+                        fh: function (id) {
+                            location.href = '/HumanResources/Human_check?id=' + id.human_id
+                        },
+                    },
+                    mounted: function () {
+                        this.fill();
+                    },
+                })
+            </script>
+</body>
+</html>

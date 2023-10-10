@@ -1,0 +1,112 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>register_list</title>
+    <script src="~/Scripts/vue/dist/vue.js"></script>
+    <script src="~/Scripts/element-ui/lib/index.js"></script>
+    <link href="~/Scripts/element-ui/lib/theme-chalk/index.css" rel="stylesheet" />
+    <script src="~/Scripts/axios/dist/axios.js"></script>
+    <script type="text/javascript"
+            src="~/Scripts/javascript/jquery-1.7.2.js">
+    </script>
+    <script type="text/javascript" src="~/Scripts/javascript/comm/comm.js"></script>
+    <!-- page css -->
+    <!-- Core css -->
+    <link rel="shortcut icon" href="~/static/image/logo/favicon.ico">
+    <link href="~/static/css/app.min.css" rel="stylesheet">
+    <title>无标题文档</title>
+</head>
+<body>
+    <div id="app">
+        <el-card class="box-card">
+            <div slot="header" class="clearfix">
+                <el-breadcrumb separator="/">
+                    <el-breadcrumb-item>首页</el-breadcrumb-item>
+                    <el-breadcrumb-item>人力资源</el-breadcrumb-item>
+                    <el-breadcrumb-item>薪酬标准管理</el-breadcrumb-item>
+                    <el-breadcrumb-item>薪酬发放登记</el-breadcrumb-item>
+                </el-breadcrumb>
+                <el-button style="float: right; padding: 3px 0" type="text" v-on:click="tj">提 交</el-button>
+            </div>
+            <div class="text item">
+                <div class="table-responsive">
+                    <table class="table">
+
+                        <tr>
+                            <td width="10%" >
+                                <span>序号</span>
+                            </td>
+                            <td width="40%">
+                                <span>{{leve}}级机构名称</span>
+                            </td>
+                            <td width="10%">
+                                <span>人数</span>
+                            </td>
+                            <td width="10%" >
+                                基本薪酬总额(元)
+                            </td>
+                            <td width="10%" >
+                                登记
+                            </td>
+                        </tr>
+                        <tr class="TD_STYLE2" v-for="(item,index) in leveList">
+                            <td>
+                                {{index+1}}
+                            </td>
+                            <td> {{item.name}} </td>
+                            <td>
+                                {{item.sunm}}
+                            </td>
+                            <td>
+                                {{item.money}}
+                            </td>
+                            <td>
+                                <a href="#" v-on:click="tj(item.id)" style="color:#00fded;">登 记</a>
+                            </td>
+                        </tr>
+                    </table>
+                    </div>
+                </div>
+            </el-card>
+            </div>
+</body>
+</html>
+<script type="text/javascript">
+    var vm = new Vue({
+        el: "#app",
+        data: {
+            leveList: [],
+            Zsun: "",
+            msun: "",
+            leve: "",
+            mo: "",
+        },
+        methods: {
+            find: function () {
+                axios.get("register_listFind", {
+                    params: {
+                        leve: this.leve
+                    }
+                }).then(res => {
+                    this.leveList = res.data
+                }).catch(err => {
+                    console.log(err);
+                })
+            },
+            tj: function (id) {
+                location.href = "register_commit?leve=" + this.leve+"&leveid="+id;
+            }
+        },
+            mounted: function () {
+                this.leve =@Html.Raw(Json.Encode(@ViewBag.leve));
+                this.find();
+        },
+    })
+</script>

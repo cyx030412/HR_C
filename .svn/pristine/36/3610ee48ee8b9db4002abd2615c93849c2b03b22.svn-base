@@ -1,0 +1,43 @@
+﻿using Dapper;
+using Model;
+using System;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Dao
+{
+    public class usersDao
+    {
+        string constr = "Data Source=DESKTOP-9EC5BJ1;Initial Catalog=HR_DB;Integrated Security=True";
+
+        //登录
+        public async Task<int> LoginAsync(users u)
+        {
+            using (SqlConnection con=new SqlConnection(constr))
+            {
+                string sql = $@"SELECT * FROM users where u_name ='{u.u_name}' and u_password='{u.u_password}'";
+                users us;
+                try
+                {
+                     us = await con.QueryFirstAsync<users>(sql);
+                }
+                catch (Exception)
+                {
+
+                    return 0;
+                }
+                if (us != null)
+                {
+                    return 1;
+                }
+                else
+                {
+                    return 0;
+                } 
+            }
+        }
+    }
+}

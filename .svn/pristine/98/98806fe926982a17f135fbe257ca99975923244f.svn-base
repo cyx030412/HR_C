@@ -1,0 +1,153 @@
+﻿using Dapper;
+using Model;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Dao
+{
+    public class salary_standardDao
+    {
+        string constr = "Data Source=DESKTOP-9EC5BJ1;Initial Catalog=HR_DB;Integrated Security=True";
+        //薪酬 添加
+        public async Task<int> SalarySelectAsync(salary_standard s, string item_ids, string item_names, string salaries)
+        {
+            using (SqlConnection con = new SqlConnection(constr))
+            {
+                DynamicParameters dynamic = new DynamicParameters();
+                dynamic.Add("@standard_id", s.standard_id);
+                dynamic.Add("@standard_name", s.standard_name);
+                dynamic.Add("@item_ids", item_ids);
+                dynamic.Add("@item_names", item_names);
+                dynamic.Add("@salaries", salaries);
+                dynamic.Add("@designer", s.designer);
+                dynamic.Add("@register", s.register);
+                dynamic.Add("@regist_time", s.regist_time);
+                dynamic.Add("@salary_sum", s.salary_sum);
+                dynamic.Add("@remark", s.remark);
+                return await con.ExecuteAsync("xinshiwu", dynamic, commandType: CommandType.StoredProcedure);
+            }
+        }
+
+        //薪酬标准 查询所有数据
+        public async Task<FenYe<salary_standard>> FenYeFindAsync(FenYe<salary_standard> fy)
+        {
+            using (SqlConnection con = new SqlConnection(constr))
+            {
+                DynamicParameters dp = new DynamicParameters();
+                dp.Add("@pageSize", fy.pageSize);
+                dp.Add("@keyName", "ssd_id");
+                dp.Add("@tableName", "salary_standard");
+                dp.Add("@currentPage", fy.currentPage);
+                dp.Add("@where", " change_status=1");
+                dp.Add("@rows", 0, DbType.Int32, ParameterDirection.Output);
+                FenYe<salary_standard> feye = new FenYe<salary_standard>();
+                feye.CList = await con.QueryAsync<salary_standard>("proc_Fenye", dp, commandType: CommandType.StoredProcedure);
+                int zts = dp.Get<int>("@rows");
+                feye.Totalnumber = zts;
+                feye.Totalpage = zts % fy.pageSize == 0 ? zts / fy.pageSize : zts / fy.pageSize + 1;
+                return feye;
+            }
+        }
+        public async Task<salary_standard> FindIDAsync(string No)
+        {
+            using (SqlConnection con = new SqlConnection(constr))
+            {
+                string sql = $@"SELECT * FROM [dbo].[salary_standard] WHERE standard_id='{No}'";
+                return await con.QueryFirstAsync<salary_standard>(sql);
+            }
+        }
+        //确认复核
+        public async Task<int> UpdateAsync(salary_standard s, string item_ids, string salaries)
+        {
+            using (SqlConnection con=new SqlConnection(constr))
+            {
+                DynamicParameters dynamic = new DynamicParameters();
+                dynamic.Add("@standard_id", s.standard_id);
+                dynamic.Add("@standard_name", s.standard_name);
+                dynamic.Add("@sdt_ids", item_ids);
+                dynamic.Add("@salaries", salaries);
+                dynamic.Add("@designer", s.designer);
+                dynamic.Add("@check_comment", s.Check_comment);
+                dynamic.Add("@check_time", s.check_time);
+                dynamic.Add("@salary_sum", s.salary_sum);
+                dynamic.Add("@Checker ", s.checker);
+                dynamic.Add("@CheckStatus", s.check_status);
+                return await con.ExecuteAsync("usp_helloworld", dynamic, commandType: CommandType.StoredProcedure);
+            }
+        }
+        //薪酬标准 查询
+        public async Task<FenYe<salary_standard>> SelectAsync(FenYe<salary_standard> fy, string where)
+        {
+            using (SqlConnection con=new SqlConnection(constr))
+            {
+                DynamicParameters dp = new DynamicParameters();
+                dp.Add("@pageSize", fy.pageSize);
+                dp.Add("@keyName", "ssd_id");
+                dp.Add("@tableName", "salary_standard");
+                dp.Add("@currentPage", fy.currentPage);
+                dp.Add("@where", where);
+                dp.Add("@rows", 0, DbType.Int32, ParameterDirection.Output);
+                FenYe<salary_standard> feye = new FenYe<salary_standard>();
+                feye.CList = await con.QueryAsync<salary_standard>("proc_Fenye", dp, commandType: CommandType.StoredProcedure);
+                int zts = dp.Get<int>("@rows");
+                feye.Totalnumber = zts;
+                feye.Totalpage = zts % fy.pageSize == 0 ? zts / fy.pageSize : zts / fy.pageSize + 1;
+                return feye;
+
+            }
+        }
+        //确认更改
+        public async Task<int> Update_gengaiAsync(salary_standard s, string item_ids, string salaries)
+        {
+            using (SqlConnection con = new SqlConnection(constr))
+            {
+                DynamicParameters dynamic = new DynamicParameters();
+                dynamic.Add("@standard_id", s.standard_id);
+                dynamic.Add("@standard_name", s.standard_name);
+                dynamic.Add("@sdt_ids", item_ids);
+                dynamic.Add("@salaries", salaries);
+                dynamic.Add("@designer", s.designer);
+                dynamic.Add("@remark", s.remark);
+                dynamic.Add("@change_time", s.change_time);
+                dynamic.Add("@salary_sum", s.salary_sum);
+                dynamic.Add("@changer ", s.Changer);
+                return await con.ExecuteAsync("UpdateSala_gengai", dynamic, commandType: CommandType.StoredProcedure);
+            }
+        }
+        //查询 所有
+        public async Task<IEnumerable<salary_standard>> FindAllAsync()
+        {
+            using (SqlConnection con=new SqlConnection(constr))
+            {
+                string sql = "SELECT * FROM salary_standard";
+                return await con.QueryAsync<salary_standard>(sql);
+            }
+        }
+        public  async Task<IEnumerable<Cascade>> ZwAsync()
+        {
+            using (SqlConnection con = new SqlConnection(constr))
+            {
+                string sql = $"select major_kind_id as value,major_kind_name as label from [dbo].[config_major_kind]";
+                List<Cascade> first_Cascaders = new List<Cascade>();
+                IEnumerable<Cascade> fir =await  con.QueryAsync<Cascade>(sql);
+                foreach (var item in fir)
+                {
+                    string sql_1 = $"select major_id as value,major_name as label from [dbo].[config_major] where major_kind_id={item.value} ";
+                    Cascade c = new Cascade()
+                    {
+                        value = item.value,
+                        label = item.label,
+                        children = con.Query<Cascade>(sql_1).ToList(),
+                    };
+                    first_Cascaders.Add(c);
+                }
+                return first_Cascaders;
+            }
+        }
+        }
+}

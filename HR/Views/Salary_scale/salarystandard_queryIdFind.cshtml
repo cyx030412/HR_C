@@ -1,0 +1,279 @@
+﻿
+@{
+    Layout = null;
+
+}
+@using Model
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>salarystandard_check</title>
+    <link href="~/Scripts/css/table.css" rel="stylesheet" />
+    <script type="text/javascript" src="~/Scripts/javascript/comm/comm.js"></script>
+    <script type="text/javascript" src="~/Scripts/javascript/jquery-1.7.2.js"></script>
+    <script src="~/Scripts/vue/dist/vue.js"></script>
+    <script src="~/Scripts/element-ui/lib/index.js"></script>
+    <link href="~/Scripts/element-ui/lib/theme-chalk/index.css" rel="stylesheet" />
+    <script src="~/Scripts/axios/dist/axios.js"></script>
+    <link rel="shortcut icon" href="~/static/image/logo/favicon.ico">
+    <link href="~/static/css/app.min.css" rel="stylesheet">
+    <style type="text/css">
+        .INPUT_STYLE2 {
+            width: 97%;
+        }
+
+        #d {
+            background-color: #ffffff;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            filter: alpha(opacity:20);
+            opacity: 0.2;
+            position: fixed;
+            display: none;
+        }
+
+        #parent {
+            border: 1px solid #C3DAF5;
+            width: 400px;
+            height: 200px;
+            position: absolute;
+            z-index: 2;
+            top: 20%;
+            left: 25%;
+            position: fixed;
+            display: none;
+        }
+
+        #child {
+            width: 100%;
+            height: 100%;
+            font-size: 15px;
+            text-align: center;
+            line-height: 25px;
+            font-weight: bold;
+        }
+
+        .button {
+            height: 30px;
+            width: 90px;
+            border-color: #D4DEE7;
+            background-color: #D4DEE7;
+            font-weight: bold;
+            font-size: 15px;
+            color: #481858;
+            cursor: pointer;
+            BORDER-BOTTOM: #D4DEE7 1px solid;
+            FILTER: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, StartColorStr=#ffffff, EndColorStr=#C3DAF5);
+        }
+    </style>
+</head>
+<script src="~/Scripts/javascript/jquery-1.7.2.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $("#button1").click(function () {
+            $("#table1").hide(800);
+            $("#table2").hide(800);
+
+            $("#d").show(1800);
+            $("#parent").fadeIn(2200);
+        });
+        $("#close").click(function () {
+            $("#d").hide(800);
+            $("#parent").hide(600);
+
+            $("#table1").show(1000);
+            $("#table2").show(1000);
+
+        });
+        $("#sure").click(function () {
+
+            $("#d").hide(800);
+            $("#parent").fadeOut(600);
+
+            $("#table1").show(1000);
+            $("#table2").show(1000);
+        });
+    });
+
+
+</script>
+<body>
+    <div id="app">
+        @{ salary_standard leve1 = ViewBag.list;
+        }
+
+        <el-card class="box-card" >
+            <div slot="header" class="clearfix">
+                <el-breadcrumb separator="/">
+                    <el-breadcrumb-item>首页</el-breadcrumb-item>
+                    <el-breadcrumb-item>人力资源</el-breadcrumb-item>
+                    <el-breadcrumb-item>薪酬标准管理</el-breadcrumb-item>
+                    <el-breadcrumb-item>薪酬标准登记查询</el-breadcrumb-item>
+                </el-breadcrumb>
+                <p style="float: right; padding: 3px 0" id="table1">
+                    <input type="button" value="打印" id="button1"
+                           class="BUTTON_STYLE1">
+                    <input type="reset" value="返 回" class="BUTTON_STYLE1" onclick="history.back();">
+                </p>
+            </div>
+            <div class="text item">
+                <div class="table-responsive" id="table2">
+                    <table class="table table-bordered">
+                        <tr>
+                            <td width="12%">
+                                薪酬编号
+                            </td>
+                            <td width="15%">
+                                {{form.No}}
+                            </td>
+                            <td width="12%">
+                                薪酬标准名称
+                            </td>
+                            <td width="11%">
+                                {{form.name}}
+                            </td>
+                            <td width="11%">
+                                薪酬总额
+                            </td>
+                            <td width="17%">
+                                {{form.sum}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                制定人
+                            </td>
+                            <td>
+                                {{form.designer}}
+                            </td>
+                            <td>
+                                复核人
+                            </td>
+                            <td>
+                                {{form.register}}
+                            </td>
+                            <td>
+                                复核时间
+                            </td>
+                            <td>
+                                {{form.regist_time|ftime}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                备注
+                            </td>
+                            <td colspan="7" height="68">
+                                {{form.Remark}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                序号
+                            </td>
+                            <td colspan="3">
+                                薪酬项目名称
+                            </td>
+                            <td colspan="4">
+                                金额
+                            </td>
+                        </tr>
+                        <tr v-for="(item,index) in Listdate">
+                            <td align="center">
+                                {{item.item_id}}
+                            </td>
+                            <td colspan="3">
+                                {{item.item_name}}
+                            </td>
+                            <td colspan="3">
+                                {{item.salary}}.00
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                </div>
+        </el-card>
+        <div id="d"></div>
+        <div id="parent">
+            <div id="child">
+                <br><br>
+                您确认打印此页面的信息吗？<br><br><br>
+                <input type="button" class="button" value="确 定" id="sure" v-on:click="excee" />
+                <input type="button" class="button" value="取 消" id="close" />
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>
+<script type="text/javascript">
+    var vm = new Vue({
+        el: "#app",
+        data: {
+            Listdate: [],
+            form: {
+                No: "",
+                name: "",
+                sum: 0,
+                designer: "",
+                register: "",
+                regist_time: "",
+                Remark: "",
+                userName: localStorage.getItem("UNAME"),
+            }
+        },
+        methods: {
+            tj: function () {
+
+            },
+            find: function () {
+                axios.get("/Salary_scale/SSDId",
+                    {
+                        params: {
+                            No: this.form.No
+                        }
+                    }).then(res => {
+                        this.Listdate = res.data;
+                    }).catch(err => {
+                        console.log(err);
+                    })
+            },
+            excee: function () {
+                axios.get("ExcelOut", {
+                    params: {
+                        No: this.form.No
+                    }
+                }).then(res => {
+                    alert(res.data)
+                }).catch(err => {
+                    console.log(err);
+                })
+            }
+        },
+        mounted: function () {
+            this.form.name  =@Html.Raw(Json.Encode(@leve1.standard_name));
+            this.form.sum =@Html.Raw(Json.Encode(@leve1.salary_sum));
+            this.form.designer =@Html.Raw(Json.Encode(@leve1.designer));
+            this.form.No =@Html.Raw(Json.Encode(@leve1.standard_id));
+            this.form.register =@Html.Raw(Json.Encode(@leve1.register));
+            this.form.regist_time=@Html.Raw(Json.Encode(@leve1.regist_time));
+            this.form.Remark =@Html.Raw(Json.Encode(@leve1.remark));
+            this.find();
+        },
+        filters: {
+            ftime: function (value) {
+                if (value == '/Date(-62135596800000)/') {
+                    return '空'
+                }
+                var dt = new Date(parseInt(value.replace("/Date(", "").replace(")/", ""), 10));
+                return dt.getFullYear() + "-" + (dt.getMonth() + 1) + "-" + dt.getDate();
+            }
+        }
+    })
+</script>

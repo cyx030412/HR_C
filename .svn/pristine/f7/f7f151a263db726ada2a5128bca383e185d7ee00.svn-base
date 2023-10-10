@@ -1,0 +1,88 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>query_locate</title>
+    <link rel="stylesheet" href="~/Scripts/css/table.css" type="text/css">
+    <script src="~/Scripts/vue/dist/vue.js"></script>
+    <script type="text/javascript" src="~/Scripts/javascript/comm/comm.js"></script>
+    <script type="text/javascript" src="~/Scripts/javascript/comm/list.js"></script>
+    <script type="text/javascript" src="~/Scripts/javascript/jquery-1.7.2.js"></script>
+    <script type="text/javascript" src="~/Scripts/javascript/calendar-ch.js"></script>
+    <script type="text/javascript" src="~/Scripts/javascript/comm/time.js"></script>
+    <link rel="stylesheet" href="~/Scripts/css/cwcalendar.css" type="text/css"></link>
+    <script src="~/Scripts/element-ui/lib/index.js"></script>
+    <link href="~/Scripts/element-ui/lib/theme-chalk/index.css" rel="stylesheet" />
+    <link rel="shortcut icon" href="~/static/image/logo/favicon.ico">
+    <link href="~/static/css/app.min.css" rel="stylesheet">
+</head>
+<body>
+    <div id="app">
+        <el-card class="box-card">
+            <div slot="header" class="clearfix">
+                <el-breadcrumb separator="/">
+                    <el-breadcrumb-item>首页</el-breadcrumb-item>
+                    <el-breadcrumb-item>人力资源管理</el-breadcrumb-item>
+                    <el-breadcrumb-item>薪酬发放管理</el-breadcrumb-item>
+                    <el-breadcrumb-item>薪酬发放查询</el-breadcrumb-item>
+                </el-breadcrumb>
+                <el-button style="float: right; padding: 3px 0" type="text" v-on:click="tj">查 询</el-button>
+            </div>
+            <div class="text item">
+                <div class="mb-3">
+                    <label for="formGroupExampleInput" class="form-label">请输入薪酬单号:</label>
+                    <input type="text" class="form-control" id="formGroupExampleInput" v-model="Id">
+                </div>
+                <div class="mb-3">
+                    <label for="formGroupExampleInput" class="form-label">请输入关键字</label>
+                    <input type="text" class="form-control" id="formGroupExampleInput" v-model="name">
+                </div>
+                <div class="mb-3">
+                    <label for="formGroupExampleInput" class="form-label">请输入建档时间</label>
+                    <br />
+                    <el-date-picker v-model="Qtime"
+                                    type="month"
+                                    placeholder="选择月"
+                                    value-format="yyyy-MM"
+                                    style="width: 1248px; border: #CCDFEA 2px solid; border-radius: .375rem; "
+                                    >
+                    </el-date-picker>
+                </div>
+            </div>
+            </el-card>
+            </div>
+</body>
+</html>
+<script type="text/javascript">
+    var vm = new Vue({
+        el: "#app",
+        data: {
+            Id: "",
+            name: "",
+            Qtime: "",
+        },
+        methods: {
+            tj: function () {
+                let year = this.Qtime.substring(0, 4);
+                let mone = this.Qtime.substring(5, 7);
+                let where = " check_status=1 ";
+                if (this.Id != "") {
+                    where += " and SalaryStandardId LIKE CONCAT('%','" + this.Id + "','%')";
+                }
+                if (this.name != "") {
+                    where += " AND first_kind_name  LIKE CONCAT('%','" + this.name + "','%') OR second_kind_name LIKE CONCAT('%','" + this.name + "','%') OR third_kind_name  LIKE CONCAT('%','" + this.name + "','%')";
+                }
+                if (this.Qtime!="") {
+                    where += " and YEAR(regist_time) = '" + year + "' and MONTH(regist_time) ='" + mone + "'";
+                }
+                location.href = "query_list?where=" + where;
+            }
+        }
+    })
+</script>

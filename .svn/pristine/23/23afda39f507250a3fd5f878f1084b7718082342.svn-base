@@ -1,0 +1,163 @@
+﻿using Dapper;
+using Model;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Dao
+{
+    public class salary_grantDao
+    {
+        string constr = "Data Source=DESKTOP-9EC5BJ1;Initial Catalog=HR_DB;Integrated Security=True";
+        //根据等级查询
+        public async Task<IEnumerable<salary_grant>> FindAsync(string leve)
+        {
+            using (SqlConnection con = new SqlConnection(constr))
+            {
+
+                string sql = "SELECT * FROM  [dbo].[salary_grant] WHERE check_status = 0";
+                if(leve == "1")
+                {
+                    sql += " and  second_kind_id is null  AND third_kind_id is NULL";
+                }else if(leve == "2")
+                {
+                    sql += " and  third_kind_id is NULL and second_kind_id is not null";
+                }
+                else
+                {
+                    sql += " and  third_kind_id is not NULL";
+                }
+                return await con.QueryAsync<salary_grant>(sql);
+            }
+         }
+        //查询等级人数
+        public async Task<string> FindSum(string leve)
+        {
+            using (SqlConnection con = new SqlConnection(constr))
+            {
+
+                string sql = "SELECT sum(human_amount) FROM  [dbo].[salary_grant] WHERE check_status = 0";
+                if (leve == "1")
+                {
+                    sql += " and second_kind_id is null  AND third_kind_id is NULL";
+                }
+                else if (leve == "2")
+                {
+                    sql += " and  third_kind_id is NULL and second_kind_id is not null";
+                }
+                else
+                {
+                    sql += " and  third_kind_id is not NULL";
+                }
+                string fh = "";
+               fh= await con.QueryFirstAsync<string>(sql);
+                if (fh == null)
+                {
+                    fh = "0";
+                }
+
+                return fh;  
+               
+            }
+        }
+        //查询等级薪酬
+        public async Task<string> FindmoneySum(string leve)
+        {
+            using (SqlConnection con = new SqlConnection(constr))
+            {
+
+                string sql = "SELECT sum(salary_standard_sum) FROM  [dbo].[salary_grant] WHERE check_status = 0";
+                if (leve == "1")
+                {
+                    sql += " and second_kind_id is null  AND third_kind_id is NULL";
+                }
+                else if (leve == "2")
+                {
+                    sql += " and  third_kind_id is NULL and second_kind_id is not null";
+                }
+                else
+                {
+                    sql += " and  third_kind_id is not NULL";
+                }
+                string fh = "";
+                fh = await con.QueryFirstAsync<string>(sql);
+                if (fh == null)
+                {
+                    fh = "0";
+                }
+                return fh;
+
+            }
+        }
+        //查询所所带复核的数据 
+        public async Task<FenYe<salary_grant>> FindAllAnscy(FenYe<salary_grant> fy)
+        {
+            using (SqlConnection con = new SqlConnection(constr))
+            {
+                DynamicParameters dp = new DynamicParameters();
+                dp.Add("@pageSize", fy.pageSize);
+                dp.Add("@keyName", "sgr_id");
+                dp.Add("@tableName", "salary_grant");
+                dp.Add("@currentPage", fy.currentPage);
+                dp.Add("@where", " check_status = 0");
+                dp.Add("@rows", 0, DbType.Int32, ParameterDirection.Output);
+                FenYe<salary_grant> feye = new FenYe<salary_grant>();
+                feye.CList = await con.QueryAsync<salary_grant>("proc_Fenye", dp, commandType: CommandType.StoredProcedure);
+                int zts = dp.Get<int>("@rows");
+                feye.Totalnumber = zts;
+                feye.Totalpage = zts % fy.pageSize == 0 ? zts / fy.pageSize : zts / fy.pageSize + 1;
+                return feye;
+            }
+        }
+        //根据发放id 查询 登记
+        public async Task<string> FindLeve(string sgid)
+        {
+            using (SqlConnection con=new SqlConnection(constr))
+            {
+                string sql = $@"SELECT * FROM [dbo].[salary_grant] WHERE salary_grant_id='{sgid}'";
+                salary_grant sg = await con.QueryFirstAsync<salary_grant>(sql);
+                if (sg.second_kind_id == null&& sg.third_kind_id == null)
+                {
+                    return "I";
+                }
+                if (sg.second_kind_id != null && sg.third_kind_id == null)
+                {
+                    return "II";
+                }
+                else
+                {
+                    return "III";
+                }
+            }
+        }
+
+        //查询所所带复核的数据 
+        public async Task<FenYe<salary_grant>> FindAllwhereAnscy(FenYe<salary_grant> fy,string where)
+        {
+            using (SqlConnection con = new SqlConnection(constr))
+            {
+                DynamicParameters dp = new DynamicParameters();
+                dp.Add("@pageSize", fy.pageSize);
+                dp.Add("@keyName", "sgr_id");
+                dp.Add("@tableName", "salary_grant");
+                dp.Add("@currentPage", fy.currentPage);
+                dp.Add("@where", where);
+                dp.Add("@rows", 0, DbType.Int32, ParameterDirection.Output);
+                FenYe<salary_grant> feye = new FenYe<salary_grant>();
+                feye.CList = await con.QueryAsync<salary_grant>("proc_Fenye", dp, commandType: CommandType.StoredProcedure);
+                int zts = dp.Get<int>("@rows");
+                feye.Totalnumber = zts;
+                feye.Totalpage = zts % fy.pageSize == 0 ? zts / fy.pageSize : zts / fy.pageSize + 1;
+                return feye;
+            }
+        }
+
+        }
+
+        
+}

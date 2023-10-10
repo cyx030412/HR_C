@@ -1,0 +1,151 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <script src="~/Scripts/javascript/jquery-1.7.2.js"></script>
+    <script src="~/Scripts/javascript/jquery.messager.js"></script>
+    <script src="~/Scripts/vue/dist/vue.js"></script>
+    <script src="~/Scripts/element-ui/lib/index.js"></script>
+    <link href="~/Scripts/element-ui/lib/theme-chalk/index.css" rel="stylesheet" />
+    <script src="~/Scripts/axios/dist/axios.js"></script>
+    
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="~/static/image/logo/favicon.ico">
+    <link href="~/static/css/app.min.css" rel="stylesheet">
+
+</head>
+<body>
+    <div id="app">
+        <div class="auth-full-height d-flex flex-row align-items-center">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="m-2">
+                                    <div class="d-flex justify-content-center mt-3">
+                                        <div class="text-center logo">
+                                            <img alt="logo" class="img-fluid" src="~/static/picture/logo-fold.png" style="height: 70px;">
+                                        </div>
+                                    </div>
+                                    <div class="text-center mt-3">
+                                        <h3 class="fw-bolder">登录</h3>
+                                        <p class="text-muted">人力资源管理</p>
+                                    </div>
+                                    <form>
+                                        <div class="form-group mb-3">
+                                            <label class="form-label">用户名</label>
+                                            <input class="form-control" v-model="Uname">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label d-flex justify-content-between">
+                                                <span>Password</span>
+                                            </label>
+                                            <div class="form-group input-affix flex-column">
+                                                <label class="d-none">密码</label>
+                                                <input formcontrolname="password" class="form-control" type="password" v-model="Upwa">
+                                            </div>
+                                        </div>
+                                        <button type="button" class="btn btn-primary w-100" v-on:click="Login">Log In</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Core Vendors JS -->
+    
+     
+
+    </div>
+</body>
+</html>
+<script type="text/javascript">
+    var vm = new Vue({
+        el: "#app",
+        data: {
+            Uname: "123",
+           Upwa:"123456"
+        },
+        methods: {
+            Login: function () {
+                axios.get("/Login/LoginIndex",{
+                    params: {
+                        u_name: this.Uname,
+                        u_password: this.Upwa
+                    }
+                }).then(res => {
+                    if (res.data != "0") {
+                        alert("登录成功!!")
+                        localStorage.setItem("uname", this.Uname);
+                        localStorage.setItem("uid", res.data)
+                        location.href = "/Main/index"
+                    }
+                    else {
+                        alert("登录失败，请检查密码或用户名是否出错！！")
+                    }
+                }).catch(err => {
+                    console.log(err);
+                })
+            }
+        }
+    })
+</script>
+<style scoped>
+    .login-wrap {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        background-image: url(../../assets/img/login-bg.jpg);
+        background-size: 100%;
+    }
+
+    .ms-title {
+        width: 100%;
+        line-height: 50px;
+        text-align: center;
+        font-size: 20px;
+        color: #fff;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .ms-login {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 350px;
+        margin: -190px 0 0 -175px;
+        border-radius: 5px;
+        background: rgba(255, 255, 255, 0.3);
+        overflow: hidden;
+    }
+
+    .ms-content {
+        padding: 30px 30px;
+    }
+
+    .login-btn {
+        text-align: center;
+    }
+
+        .login-btn button {
+            width: 100%;
+            height: 36px;
+            margin-bottom: 10px;
+        }
+
+    .login-tips {
+        font-size: 12px;
+        line-height: 30px;
+        color: #fff;
+    }
+</style>

@@ -1,0 +1,52 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Dapper;
+using HR.Models;
+using Model;
+namespace Dao
+{
+    public class Config_Public_CharDAO
+    {
+        string ConStr = "Data Source=.;Initial Catalog=HR_DB;User ID=sa;Password=sasa";
+        //公共属性设置查询
+        public async Task<IEnumerable<Config_Public_Char>> CPCSelect()
+        {
+            using (SqlConnection connection=new SqlConnection(ConStr))
+            {
+                string sql = "select * from [dbo].[config_public_char]";
+                return await connection.QueryAsync<Config_Public_Char>(sql);
+            }
+        }
+        //公共属性删除
+        public async Task<int> GGDelete(int pbc_id)
+        {
+            using (SqlConnection connection=new SqlConnection(ConStr))
+            {
+                string sql = $"delete from [dbo].[config_public_char] where [pbc_id]='{pbc_id}'";
+                return await connection.ExecuteAsync(sql);
+            }
+        }
+        //公共属性新增
+        public async Task<int> GGInsert(Config_Public_Char c)
+        {
+            using (SqlConnection connection = new SqlConnection(ConStr))
+            {
+                string sql = $"insert into [dbo].[config_public_char]([attribute_kind],[attribute_name])values('{c.attribute_kind}','{c.attribute_name}')";
+                return await connection.ExecuteAsync(sql);
+            }
+        }
+        //职称设置
+        public async Task<IEnumerable<Config_Public_Char>> ZCSelect()
+        {
+            using (SqlConnection connection=new SqlConnection(ConStr))
+            {
+                string sql = "select * from [dbo].[config_public_char] where [attribute_kind]='职称'";
+                return await connection.QueryAsync<Config_Public_Char>(sql);
+            }
+        }
+    }
+}

@@ -1,0 +1,254 @@
+﻿
+@{
+    Layout = null;
+
+}
+@using Model
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>salarystandard_check</title>
+    <script type="text/javascript" src="~/Scripts/javascript/comm/comm.js"></script>
+    <script type="text/javascript" src="~/Scripts/javascript/jquery-1.7.2.js"></script>
+    <script src="~/Scripts/vue/dist/vue.js"></script>
+    <script src="~/Scripts/element-ui/lib/index.js"></script>
+    <link href="~/Scripts/element-ui/lib/theme-chalk/index.css" rel="stylesheet" />
+    <script src="~/Scripts/axios/dist/axios.js"></script>
+    <!-- page css -->
+    <!-- Core css -->
+    <link rel="shortcut icon" href="~/static/image/logo/favicon.ico">
+    <link href="~/static/css/app.min.css" rel="stylesheet">
+</head>
+<body>
+    <div id="app">
+        @{ salary_standard leve1 = ViewBag.list;
+        }
+
+        <el-card class="box-card">
+            <div slot="header" class="clearfix">
+                <el-breadcrumb separator="/">
+                    <el-breadcrumb-item>首页</el-breadcrumb-item>
+                    <el-breadcrumb-item>人力资源</el-breadcrumb-item>
+                    <el-breadcrumb-item>薪酬标准管理</el-breadcrumb-item>
+                    <el-breadcrumb-item>薪酬标准复核</el-breadcrumb-item>
+                </el-breadcrumb>
+                <el-button style="float: right; padding: 3px 0" type="text" v-on:click="tj">提 交</el-button>
+            </div>
+            <div class="text item">
+                <form class="row g-3">
+                    <div class="row g-3">
+                        <div class="col-sm">
+                            <label class="form-label">薪酬标准编号</label>
+                            <input type="text" class="form-control" placeholder="City" aria-label="City" v-model="form.No" readonly="readonly">
+                        </div>
+                        <div class="col-sm">
+                            <label class="form-label">薪酬标准名称</label>
+                            <input type="text" class="form-control" v-model="form.name">
+                        </div>
+                        <div class="col-sm">
+                            <label class="form-label">薪酬总额</label>
+                            <input type="text" class="form-control" name="standard.standardName" id="standardName" readonly="readonly" v-model="form.sum">
+                        </div>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-sm">
+                            <label class="form-label">制定人</label>
+                            <input type="text" class="form-control" v-model="form.designer" readonly="readonly">
+                        </div>
+                        <div class="col-sm">
+                            <label class="form-label">复核人</label>
+                            <input type="text" class="form-control" v-model="form.register" readonly="readonly">
+                        </div>
+                        <div class="col-sm">
+                            <label class="form-label">复刻时间</label>
+                            <input type="text" class="form-control" name="standard.registTime" readonly="readonly" v-model="form.regist_time">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="inputState" class="form-label">复核是否通过</label>
+                        <select id="inputState" class="form-select" v-model="form.CheckStatus"> 
+                            <option label="复核通过" value="1">是否通过复核</option>
+                            <option label="复核不通过" value="0"></option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-text">复刻备注</span>
+                        <textarea class="form-control" aria-label="With textarea" v-model="form.Remark"></textarea>
+                    </div>
+                </form>
+                <div class="table-responsive">
+                    <table class="table">
+                        <tr  v-for="(item,index) in Listdate">
+                            <td align="center">
+                                {{item.item_id}}
+                                <input type="hidden" name="details[0].itemId" value="63">
+                            </td>
+                            <td colspan="3">
+                                {{item.item_name}}
+                                <input type="hidden" id="details1" name="details[0].itemName" value="">
+                            </td>
+                            <td>
+                                <input type="text" :id="salary(index)" v-model="item.salary" name="details[0].salary"
+                                        v-on:input="Nuame()">
+                            </td>
+                            <td colspan="3">
+                                &nbsp;
+                            </td>
+                        </tr>
+                    </table>
+            </div>
+               </div>
+        </el-card>
+    </div>
+</body>
+</html>
+<script type="text/javascript">
+    var vm = new Vue({
+        el: "#app",
+        data: {
+            Listdate: [],
+            userList:[],
+            form: {
+                No: "",
+                name: "",
+                sum: 0,
+                designer: "",
+                register: localStorage.getItem("UNAME"),
+                regist_time: "",
+                Remark: "",
+                CheckStatus:"",
+            }
+        },
+        methods: {
+            Nuame: function () {
+                var sum = 0;
+                for (var i = 1; i <= this.Listdate.length; i++) {
+                    var salary = document.getElementById("salary" + i).value;
+                    if (salary == "") {
+                        salary = "0.00";
+                    }
+                    sum = Number(sum) + Number(salary);
+                }
+                this.form.sum = sum;
+            },
+            salary: function (i) {
+                return "salary" + (i + 1)
+            },
+            tj: function () {
+                //获取金额
+                console.log(this.form.CheckStatus);
+                let item_ids = "";
+                let sumstr = "";
+                for (var i = 0; i < this.Listdate.length; i++) {
+                    if (i + 1 == this.Listdate.length) {
+                        item_ids += this.Listdate[i].sdt_id;
+                    } else {
+                        item_ids += this.Listdate[i].sdt_id + ",";
+                    }
+                }
+                for (var i = 1; i <= this.Listdate.length; i++) {
+                    var salary = document.getElementById("salary" + i).value;
+                    if (salary == "") {
+                        salary = "0.00";
+                    }
+                    if (i == this.Listdate.length) {
+                        sumstr += salary;
+                    } else {
+                        sumstr += salary + ",";
+                    }
+                }
+                axios.get("/Salary_scale/SSDFH",
+                    {
+                        params: {
+                            standard_id: this.form.No,
+                            standard_name: this.form.name,
+                            designer: this.form.designer,
+                            checker: this.form.register,
+                            check_time: this.form.regist_time,
+                            Check_comment: this.form.Remark,
+                            salary_sum: this.form.sum,
+                            check_status: this.form.CheckStatus,
+                            item_ids: item_ids,
+                            salaries: sumstr,
+
+                        },
+
+                    }).then(res => {
+                        if (Number(res.data) > 0) {
+                            alert("复核成功");
+                            location.href = "salarystandard_check_list";
+                        }
+                    }).catch(err => {
+                        console.log(err);
+                    })
+
+            },
+            find: function () {
+                axios.get("/Salary_scale/SSDId",
+                    {
+                        params: {
+                            No: this.form.No
+                        }
+                    }).then(res => {
+                        this.Listdate = res.data;
+                    }).catch(err => {
+
+                    })
+                axios.get("UserList").then(res => {
+                    this.userList = res.data
+                }).catch(err => {
+                    console.log(err);
+                })
+            },
+            time: function () {
+                var d = new Date();
+                var y = d.getFullYear();
+                var moth = d.getMonth() + 1;
+                var date = d.getDate();
+                var h = d.getHours();
+                var m = d.getMinutes();
+                var s = d.getSeconds();
+                var hh = 20 - 1 - h;
+                var mm = 60 - 1 - m;
+                var ss = 60 - s;
+                if (hh > 0) {
+                    mm = mm + 60 * hh;
+                }
+                if (moth < 10) {
+                    moth = "0" + moth;
+                }
+                if (date < 10) {
+                    date = "0" + date;
+                }
+                if (h < 10) {
+                    h = "0" + h;
+                }
+                if (m < 10) {
+                    m = "0" + m;
+                }
+                if (s < 10) {
+                    s = "0" + s;
+                }
+                if (mm < 10) {
+                    mm = "0" + mm;
+                }
+                if (ss < 10) {
+                    ss = "0" + ss;
+                }
+                this.form.regist_time = y + "-" + moth + "-" + date + " " + h + ":" + m + ":" + s;
+
+            },
+        },
+        mounted: function () {
+            this.form.name = this.xNo =@Html.Raw(Json.Encode(@leve1.standard_name));
+            this.form.sum =@Html.Raw(Json.Encode(@leve1.salary_sum));
+            this.form.designer =@Html.Raw(Json.Encode(@leve1.designer));
+            this.form.No =@Html.Raw(Json.Encode(ViewBag.s));
+            this.find();
+            setInterval(this.time, 1000);
+
+        }
+    })
+</script>

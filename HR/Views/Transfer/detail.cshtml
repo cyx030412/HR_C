@@ -1,0 +1,211 @@
+﻿
+@{
+    Layout = null;
+}
+@using Model
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>detail</title>
+    <script src="~/Scripts/vue/dist/vue.js"></script>
+    <script src="~/Scripts/element-ui/lib/index.js"></script>
+    <link href="~/Scripts/element-ui/lib/theme-chalk/index.css" rel="stylesheet" />
+    <link rel="shortcut icon" href="~/static/image/logo/favicon.ico">
+    <link href="~/static/css/app.min.css" rel="stylesheet">
+    <style type="text/css">
+        .TD_STYLE2 {
+            color: #486F88;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        @{ major_change hf = ViewBag.mcobj;}
+        <el-card class="box-card">
+            <div slot="header" class="clearfix">
+                <el-breadcrumb separator="/">
+                    <el-breadcrumb-item>首页</el-breadcrumb-item>
+                    <el-breadcrumb-item>人力资源</el-breadcrumb-item>
+                    <el-breadcrumb-item>调动管理</el-breadcrumb-item>
+                    <el-breadcrumb-item>调动登记查看</el-breadcrumb-item>
+                </el-breadcrumb>
+            </div>
+            <div class="text item">
+                <div class="text item">
+                    <table class="table table-bordered">
+                        <tr height="21">
+                            <td class="TD_STYLE1" width="8%">
+                                档案编号
+                            </td>
+                            <td class="TD_STYLE2" width="10%">
+                                @hf.human_id
+                            </td>
+                            <td class="TD_STYLE1" width="8%">
+                                姓名
+                            </td>
+                            <td class="TD_STYLE2" width="10%">
+                                @hf.human_name
+                            </td>
+                            <td class="TD_STYLE1" width="8%">
+                            </td>
+                            <td class="TD_STYLE2" width="10%">
+                            </td>
+                            <td class="TD_STYLE1" width="8%">
+                            </td>
+                            <td class="TD_STYLE2" width="10%">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="TD_STYLE1" width="8%">
+                                原一级机构
+                            </td>
+                            <td class="TD_STYLE2">
+                                @hf.first_kind_name
+                            </td>
+                            <td class="TD_STYLE1" width="8%">
+                                原二级机构
+                            </td>
+                            <td class="TD_STYLE2" width="10%">
+                                @hf.second_kind_name
+                            </td>
+                            <td class="TD_STYLE1" width="8%">
+                                原三级机构
+                            </td>
+                            <td class="TD_STYLE2" width="10%">
+                                @hf.third_kind_name
+                            </td>
+                            <td class="TD_STYLE1" width="8%">
+                            </td>
+                            <td class="TD_STYLE2" width="10%">
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td class="TD_STYLE1">
+                                原职位分类
+                            </td>
+                            <td class="TD_STYLE2">
+                                @hf.major_kind_name
+                            </td>
+                            <td class="TD_STYLE1" width="12%">
+                                原职位名称
+                            </td>
+                            <td class="TD_STYLE2">
+                                @hf.major_name
+                            </td>
+                            <td class="TD_STYLE1">
+                                原薪酬标准
+                            </td>
+                            <td class="TD_STYLE2">
+                                @hf.salary_standard_name
+                            </td>
+                            <td class="TD_STYLE1">
+                                原薪酬总额
+                            </td>
+                            <td class="TD_STYLE2">
+                                @hf.salary_sum
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="TD_STYLE1">
+                                新一级机构名称
+                            </td>
+                            <td class="TD_STYLE2">
+                                @hf.new_first_kind_name
+                            </td>
+                            <td class="TD_STYLE1" width="12%">
+                                新二级机构名称
+                            </td>
+                            <td class="TD_STYLE2">
+                                @hf.new_second_kind_name
+                            </td>
+                            <td class="TD_STYLE1" width="12%">
+                                新三级机构名称
+                            </td>
+                            <td class="TD_STYLE2">
+                                @hf.new_third_kind_name
+                            </td>
+                            <td class="TD_STYLE1" width="8%">
+                            </td>
+                            <td class="TD_STYLE2" width="10%">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="TD_STYLE1">
+                                新职位分类
+                            </td>
+                            <td class="TD_STYLE2">
+                                @hf.new_major_kind_name
+                            </td>
+                            <td class="TD_STYLE1" width="12%">
+                                新职位名称
+                            </td>
+                            <td class="TD_STYLE2">
+                                @hf.new_major_name
+                            </td>
+                            <td class="TD_STYLE1">
+                                新薪酬标准
+                            </td>
+                            <td class="TD_STYLE2">
+                                @hf.new_salary_standard_name
+                            </td>
+                            <td class="TD_STYLE1">
+                                新薪酬总额
+                            </td>
+                            <td class="TD_STYLE2">
+                                @hf.new_salary_sum
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td class="TD_STYLE1">
+                                登记人
+                            </td>
+                            <td class="TD_STYLE2">
+                                @hf.register
+                            </td>
+                            <td class="TD_STYLE1">
+                                登记时间
+                            </td>
+                            <td class="TD_STYLE2">
+                                @hf.regist_time
+                            </td>
+                            <td class="TD_STYLE1">
+                                复核人
+                            </td>
+                            <td class="TD_STYLE2">
+                                @hf.checker
+                            </td>
+                            <td class="TD_STYLE1">
+                                复核时间
+                            </td>
+                            <td class="TD_STYLE2">
+                                @hf.check_time
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="TD_STYLE1">
+                                调动原因
+                            </td>
+                            <td colspan="7" class="TD_STYLE2">
+                                <textarea name="majorChange.changeReason" rows="6" cols="140" readonly="readonly" class="TEXTAREA_STYLE1">						
+						@hf.change_reason
+				    </textarea>
+                            </td>
+                        </tr>
+                    </table>
+                    </div>
+                </div>
+</el-card>
+
+       
+    </div>
+</body>
+</html>
+<script type="text/javascript">
+    var vm = new Vue({
+        el:"#app",
+    })
+</script>

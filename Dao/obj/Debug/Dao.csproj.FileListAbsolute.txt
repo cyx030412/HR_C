@@ -1,0 +1,13 @@
+E:\.net\HR\Dao\bin\Debug\Dao.dll
+E:\.net\HR\Dao\bin\Debug\Dao.pdb
+E:\.net\HR\Dao\bin\Debug\Dapper.dll
+E:\.net\HR\Dao\bin\Debug\Model.dll
+E:\.net\HR\Dao\bin\Debug\System.Data.SqlClient.dll
+E:\.net\HR\Dao\bin\Debug\Model.pdb
+E:\.net\HR\Dao\bin\Debug\Dapper.xml
+E:\.net\HR\Dao\bin\Debug\System.Data.SqlClient.xml
+E:\.net\HR\Dao\obj\Debug\Dao.csproj.AssemblyReference.cache
+E:\.net\HR\Dao\obj\Debug\Dao.csproj.CoreCompileInputs.cache
+E:\.net\HR\Dao\obj\Debug\Dao.csproj.CopyComplete
+E:\.net\HR\Dao\obj\Debug\Dao.dll
+E:\.net\HR\Dao\obj\Debug\Dao.pdb

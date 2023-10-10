@@ -1,0 +1,119 @@
+﻿
+@{
+    Layout = null;
+}
+@using Model
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Leve1Select</title>
+    <link href="~/Scripts/css/table.css" rel="stylesheet" />
+    <script src="~/Scripts/javascript/comm/comm.js"></script>
+    <script src="~/Scripts/vue/dist/vue.js"></script>
+    <script src="~/Scripts/axios/dist/axios.js"></script>
+</head>
+<body>
+    <div id="app">
+        @{ config_file_first_kind leve1 = ViewBag.s;}
+        <form name="configfilefirstkindForm" method="post"
+              action="">
+            <table width="100%">
+                <tr>
+                    <td>
+                        <font color="black">
+                            您正在做的业务是：人力资源--客户化设置--人力资源档案管理设置--I级机构设置--I级机构修改
+                        </font>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="right">
+                        <input type="button" value="提交" class="BUTTON_STYLE1"  v-on:click="tj">
+                        <input type="button" value="返回" class="BUTTON_STYLE1"
+                               onclick="history.back();">
+                    </td>
+                </tr>
+            </table>
+
+            <table width="100%" border="1" cellpadding=0 cellspacing=1
+                   bordercolorlight=#848284 bordercolordark=#eeeeee
+                   class="TABLE_STYLE1">
+                <tr>
+                    <td width="19%" class="TD_STYLE1">
+                        I级机构编号
+                    </td>
+                    <td width="81%" class="TD_STYLE2">@leve1.first_kind_id</td>
+                </tr>
+                <tr>
+                    <td class="TD_STYLE1">
+                        I级机构名称
+                    </td>
+                    <td class="TD_STYLE2">
+                        <input type="text" name="cffk.firstKindName"
+                               class="INPUT_STYLE1" v-model="Fname">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TD_STYLE1">
+                        薪酬发放责任人编号（多个编号之间请用"半角逗号"加"一个空格"隔开，如", "）
+                    </td>
+                    <td class="TD_STYLE2">
+                        <textarea name="cffk.firstKindSalaryId" rows="4"
+                                  class="TEXTAREA_STYLE1" v-model="xNo"></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TD_STYLE1">
+                        销售责任人编号（多个编号之间请用"半角逗号"加"一个空格"隔开，如", "）
+                    </td>
+                    <td class="TD_STYLE2">
+                        <textarea name="cffk.firstKindSaleId" rows="4"
+                                  class="TEXTAREA_STYLE1" v-model="sNo"></textarea>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</body>
+</html>
+<script type="text/javascript">
+    var vm = new Vue({
+        el: "#app",
+        data: {
+            Fname:"",
+            xNo: "",
+            sNo: "",
+            ID: "",
+        },
+        methods: {
+            tj() {
+                axios.get("/Client/Leve1UpdateZX", {
+                    params:
+                    {
+                        first_kind_id: this.ID,
+                        first_kind_name: this.Fname,
+                        first_kind_salary_id: this.xNo,
+                        first_kind_sale_id: this.sNo
+                    }
+                }).then(res => {
+                    if (res.data == "1") {
+                        location.href = "Leve1";
+                        alert("修改成功")
+                    } else {
+                        location.href = "Leve1";
+                        alert("修改失败")
+                    }
+                }).catch(err => {
+                    console.log(err);
+                })
+            }
+        },
+        mounted: function () {
+             this.xNo =@Html.Raw(Json.Encode(@leve1.first_kind_salary_id));
+             this.sNo =@Html.Raw(Json.Encode(@leve1.first_kind_sale_id));
+            this.Fname =@Html.Raw(Json.Encode(leve1.first_kind_name));
+            this.ID=@Html.Raw(Json.Encode(@leve1.first_kind_id));
+        }
+    })
+</script>

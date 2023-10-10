@@ -1,0 +1,318 @@
+﻿
+@{
+    Layout = null;
+
+}
+@using Model
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>salarystandard_check</title>
+    <link href="~/Scripts/css/table.css" rel="stylesheet" />
+    <script type="text/javascript" src="~/Scripts/javascript/comm/comm.js"></script>
+    <script type="text/javascript" src="~/Scripts/javascript/jquery-1.7.2.js"></script>
+    <script src="~/Scripts/vue/dist/vue.js"></script>
+    <script src="~/Scripts/element-ui/lib/index.js"></script>
+    <link href="~/Scripts/element-ui/lib/theme-chalk/index.css" rel="stylesheet" />
+    <script src="~/Scripts/axios/dist/axios.js"></script>
+    <style type="text/css">
+        .INPUT_STYLE2 {
+            width: 97%;
+        }
+        .el-input--suffix .el-input__inner {
+            height: 25px;
+            padding-right: 48px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        @{ salary_standard leve1 = ViewBag.list;
+            }
+        <form method="post" action="salarystandard_register_success.html">
+            <table width="100%">
+                <tr>
+                    <td>
+                        <font color="black">
+                            您正在做的业务是：人力资源--薪酬标准管理--薪酬标准登记复核
+
+                        </font>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="right">
+                        <input type="button" value="提 交" onclick="check()" class="BUTTON_STYLE1" v-on:click="tj">
+                        <input type="reset" value="返 回" class="BUTTON_STYLE1"  onclick="history.back();">
+                    </td>
+                </tr>
+            </table>
+            <table id="stable" width="100%" border="1" cellpadding=0 cellspacing=1
+                   bordercolorlight=#848284 bordercolordark=#eeeeee
+                   class="TABLE_STYLE1">
+                <tr>
+                    <td width="74" class="TD_STYLE1">
+                        薪酬标准编号
+                    </td>
+                    <td width="168" class="TD_STYLE2">
+                        <input type="text" name="standard.standardId" readonly="readonly" class="INPUT_STYLE2" v-model="form.No">
+                    </td>
+                    <td width="83" class="TD_STYLE1">
+                        薪酬标准名称
+                    </td>
+                    <td width="171" class="TD_STYLE2">
+                        <input type="text" name="standard.standardName" id="standardName" class="INPUT_STYLE2" v-model="form.name">
+                    </td>
+                    <td width="170" class="TD_STYLE1">
+                        薪酬总额
+                    </td>
+                    <td width="138" class="TD_STYLE2">
+                        <input type="text" name="standard.salarySum" id="sumSalary" readonly class="INPUT_STYLE2" v-model="form.sum" />
+                    </td>
+                    <td width="103" class="TD_STYLE1">
+                        &nbsp;
+                    </td>
+                    <td width="95" height="26" class="TD_STYLE2">
+                        &nbsp;
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TD_STYLE1">
+                        制定人
+                    </td>
+                    <td class="TD_STYLE2">
+                        <el-select v-model="form.designer" placeholder="请选择制定人">
+                            <el-option :label="item.u_name" :value="item.u_name" v-for="item in userList"></el-option>
+                        </el-select>
+                    </td>
+                    <td class="TD_STYLE1">
+                        复核人
+                    </td>
+                    <td class="TD_STYLE2">
+                        <el-select v-model="form.register" placeholder="请选择制定人">
+                            <el-option :label="item.u_name" :value="item.u_name" v-for="item in userList"></el-option>
+                        </el-select>
+                    </td>
+                    <td class="TD_STYLE1">
+                        复核时间
+                    </td>
+                    <td class="TD_STYLE2">
+                        <input type="text" id="Tdate" name="standard.registTime" readonly="readonly" class="INPUT_STYLE2" v-model="form.regist_time">
+                    </td>
+                    <td class="TD_STYLE1">
+                        &nbsp;
+                    </td>
+                    <td class="TD_STYLE2">
+                        &nbsp;
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TD_STYLE1">
+                        是否通过复核
+                    </td>
+                    <td colspan="7" class="TD_STYLE2">
+                        <el-select v-model="form.CheckStatus" placeholder="请选择复核结果">
+                            <el-option label="复核通过" value="1"></el-option>
+                            <el-option label="复核不通过" value="0"></el-option>
+                        </el-select>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TD_STYLE1">
+                        复核意见
+                    </td>
+                    <td colspan="7" class="TD_STYLE2">
+                        <textarea name="standard.checkComment" rows="4" class="INPUT_STYLE2" v-model="form.Remark"></textarea>
+
+                    </td>
+                </tr>
+                <tr class="TD_STYLE1">
+                    <td align="center">
+                        序号
+                    </td>
+                    <td colspan="3">
+                        薪酬项目名称
+                    </td>
+                    <td>
+                        金额
+                    </td>
+                    <td colspan="3">
+                        &nbsp;
+                    </td>
+                </tr>
+                <tbody>
+
+                    <tr class="TD_STYLE2" v-for="(item,index) in Listdate">
+                        <td align="center">
+                            {{item.item_id}}
+                            <input type="hidden" name="details[0].itemId" value="63">
+                        </td>
+                        <td colspan="3">
+                            {{item.item_name}}
+                            <input type="hidden" id="details1" name="details[0].itemName" value="">
+                        </td>
+                        <td>
+                            <input type="text" :id="salary(index)" v-model="item.salary" name="details[0].salary"
+                                   class="INPUT_STYLE2" v-on:input="Nuame()">
+                        </td>
+                        <td colspan="3">
+                            &nbsp;
+                        </td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+        </form>
+    </div>
+</body>
+</html>
+<script type="text/javascript">
+    var vm = new Vue({
+        el: "#app",
+        data: {
+            Listdate: [],
+            userList:[],
+            form: {
+                No: "",
+                name: "",
+                sum: 0,
+                designer: "",
+                register: localStorage.getItem("UNAME"),
+                regist_time: "",
+                Remark: "",
+                CheckStatus:"",
+            }
+        },
+        methods: {
+            Nuame: function () {
+                var sum = 0;
+                for (var i = 1; i <= this.Listdate.length; i++) {
+                    var salary = document.getElementById("salary" + i).value;
+                    if (salary == "") {
+                        salary = "0.00";
+                    }
+                    sum = Number(sum) + Number(salary);
+                }
+                this.form.sum = sum;
+            },
+            salary: function (i) {
+                return "salary" + (i + 1)
+            },
+            tj: function () {
+                //获取金额
+                console.log(this.form.CheckStatus);
+                let item_ids = "";
+                let sumstr = "";
+                for (var i = 0; i < this.Listdate.length; i++) {
+                    if (i + 1 == this.Listdate.length) {
+                        item_ids += this.Listdate[i].sdt_id;
+                    } else {
+                        item_ids += this.Listdate[i].sdt_id + ",";
+                    }
+                }
+                for (var i = 1; i <= this.Listdate.length; i++) {
+                    var salary = document.getElementById("salary" + i).value;
+                    if (salary == "") {
+                        salary = "0.00";
+                    }
+                    if (i == this.Listdate.length) {
+                        sumstr += salary;
+                    } else {
+                        sumstr += salary + ",";
+                    }
+                }
+                axios.get("/Salary_scale/SSDFH",
+                    {
+                        params: {
+                            standard_id: this.form.No,
+                            standard_name: this.form.name,
+                            designer: this.form.designer,
+                            checker: this.form.register,
+                            check_time: this.form.regist_time,
+                            Check_comment: this.form.Remark,
+                            salary_sum: this.form.sum,
+                            check_status: this.form.CheckStatus,
+                            item_ids: item_ids,
+                            salaries: sumstr,
+
+                        },
+
+                    }).then(res => {
+                        if (Number(res.data) > 0) {
+                            alert("复核成功");
+                            location.href = "salarystandard_check_list";
+                        }
+                    }).catch(err => {
+                        console.log(err);
+                    })
+
+            },
+            find: function () {
+                axios.get("/Salary_scale/SSDId",
+                    {
+                        params: {
+                            No: this.form.No
+                        }
+                    }).then(res => {
+                        this.Listdate = res.data;
+                    }).catch(err => {
+
+                    })
+                axios.get("UserList").then(res => {
+                    this.userList = res.data
+                }).catch(err => {
+                    console.log(err);
+                })
+            },
+            time: function () {
+                var d = new Date();
+                var y = d.getFullYear();
+                var moth = d.getMonth() + 1;
+                var date = d.getDate();
+                var h = d.getHours();
+                var m = d.getMinutes();
+                var s = d.getSeconds();
+                var hh = 20 - 1 - h;
+                var mm = 60 - 1 - m;
+                var ss = 60 - s;
+                if (hh > 0) {
+                    mm = mm + 60 * hh;
+                }
+                if (moth < 10) {
+                    moth = "0" + moth;
+                }
+                if (date < 10) {
+                    date = "0" + date;
+                }
+                if (h < 10) {
+                    h = "0" + h;
+                }
+                if (m < 10) {
+                    m = "0" + m;
+                }
+                if (s < 10) {
+                    s = "0" + s;
+                }
+                if (mm < 10) {
+                    mm = "0" + mm;
+                }
+                if (ss < 10) {
+                    ss = "0" + ss;
+                }
+                this.form.regist_time = y + "-" + moth + "-" + date + " " + h + ":" + m + ":" + s;
+
+            },
+        },
+        mounted: function () {
+            this.form.name = this.xNo =@Html.Raw(Json.Encode(@leve1.standard_name));
+            this.form.sum =@Html.Raw(Json.Encode(@leve1.salary_sum));
+            this.form.designer =@Html.Raw(Json.Encode(@leve1.designer));
+            this.form.No =@Html.Raw(Json.Encode(ViewBag.s));
+            this.find();
+            setInterval(this.time, 1000);
+
+        }
+    })
+</script>

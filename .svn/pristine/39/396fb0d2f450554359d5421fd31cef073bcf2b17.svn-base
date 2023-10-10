@@ -1,0 +1,69 @@
+﻿
+@{
+    Layout = null;
+}
+@using HR.Models
+@model Model.Config_Major
+<!DOCTYPE html>
+
+
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+   
+</head>
+
+
+<body>
+    
+        <table width="100%">
+            <tr>
+                <td>
+                    <font color="black">
+                        您正在做的业务是：人力资源--客户化设置--人力资源档案管理设置--职位设置--职位添加
+                    </font>
+                </td>
+            </tr>
+            
+        </table>
+
+        <div class="container">
+            @using (Html.BeginForm("ZWSZInsert", "Client", FormMethod.Post))
+            {
+                <table width="100%">
+                    <tr>
+                        <td align="right">
+                            <input type="submit" value="提交" class="BUTTON_STYLE1">
+                            <input type="button" value="返回" class="BUTTON_STYLE1"
+                                   onclick="history.back();">
+                        </td>
+                    </tr>
+                </table>
+                <div class="form-group">
+                    @Html.LabelFor(e => e.major_kind_id)
+                    @Html.TextBoxFor(e => e.major_kind_id, "", new { @class = "form-control" })
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(e => e.major_kind_name)
+                    @Html.TextBoxFor(e => e.major_kind_name, "", new { @class = "form-control" })
+
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(e => e.major_id)
+                    @Html.TextBoxFor(e => e.major_id, "", new { @class = "form-control" })
+
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(e => e.major_name)
+                    @Html.TextBoxFor(e => e.major_name, "", new { @class = "form-control" })
+
+                </div>
+            }
+        </div>
+    
+</body>
+</html>
+
+

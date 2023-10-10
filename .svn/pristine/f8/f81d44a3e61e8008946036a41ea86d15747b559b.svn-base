@@ -1,0 +1,83 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>list</title>
+    <script src="~/Scripts/vue/dist/vue.js"></script>
+    <script src="~/Scripts/element-ui/lib/index.js"></script>
+    <link href="~/Scripts/element-ui/lib/theme-chalk/index.css" rel="stylesheet" />
+    <script src="~/Scripts/axios/dist/axios.js"></script>
+    <link href="~/Scripts/css/table.css" rel="stylesheet" />
+</head>
+<body>
+    <div id="app">
+        <font color="black"> 您在做的业务是-人力资源-调动管理-调动查询列表 </font>
+        <br /><br /><br />
+        <el-table :data="list"
+                  border
+                  style="width: 100%"
+                  :cell-style="{ textAlign: 'center' }"
+                  :header-cell-style="{textAlign: 'center'}">
+            <el-table-column prop="new_first_kind_name"
+                             label="I级机构"
+                             width="250px">
+            </el-table-column>
+            <el-table-column prop="new_second_kind_name"
+                             label="II级机构"
+                             width="250px">
+            </el-table-column>
+            <el-table-column prop="new_third_kind_name"
+                             label="III级机构"
+                             width="250px">
+            </el-table-column>
+            <el-table-column prop="salary_standard_name"
+                             label="薪酬标准"
+                             width="250px">
+            </el-table-column>
+            <el-table-column prop="human_name"
+                             label="名称"
+                             width="200px">
+            </el-table-column>
+            <el-table-column label="查看">
+                <template slot-scope="scope">
+                    <el-button size="mini" v-on:click="td(scope.row.mch_id)">查看</el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+    </div>
+</body>
+</html>
+<script>
+    var vm = new Vue({
+        el: "#app",
+        data: {
+           list:[],
+        },
+        methods: {
+            find: function () {
+                axios.get("Findlist", {
+                    params: {
+                        where:@Html.Raw(Json.Encode(@ViewBag.where)),
+                    }
+                }).then(res => {
+                    this.list = res.data;
+                }).catch(err => {
+                    console.log(err);
+                })
+            },
+            td: function (id) {
+                location.href = "detail?id=" + id
+            }
+        },
+        mounted: function () {
+            this.find();
+        }
+    })
+</script>
+

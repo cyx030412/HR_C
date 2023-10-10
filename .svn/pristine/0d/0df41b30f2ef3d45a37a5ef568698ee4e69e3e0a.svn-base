@@ -1,0 +1,82 @@
+﻿using Dao;
+using Model;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Web;
+using System.Web.Mvc;
+
+namespace HR.Controllers
+{
+    //客户化设置
+    public class ClientController : Controller
+    {
+        //一级机构设值Dao
+        config_file_first_kindDao leveldao=new config_file_first_kindDao();
+
+        //人力资源档案管理设置
+        //Ⅰ级机构设置
+        public ActionResult Level()
+        {
+            return View();
+        }
+        //一级机构设置的查询所有数据
+        public async Task<ActionResult> Leve1Find() 
+        {
+           IEnumerable<config_file_first_kind> list= await leveldao.FindAsync();
+            return Json(list, JsonRequestBehavior.AllowGet);
+        }
+        //Ⅰ级机构设置添加视图
+        public ActionResult Leve1Select()
+        {
+            return View();
+        }
+        //1级机构设置添加
+        public async Task<ActionResult> Leve1SelectZX(config_file_first_kind t)
+        {
+           int dore=await leveldao.SelectAsync(t);
+            if (dore == 1)
+            {
+                return Content("1");
+            }
+            else
+            {
+                return Content("2");
+            }
+        }
+        //1级机构设置删除
+        public async Task<ActionResult> Leve1Delect(string No)
+        {
+            int dore = await leveldao.DelectAsync(No);
+            if (dore == 1)
+            {
+                return Content("1");
+            }
+            else
+            {
+                return Content("2");
+            }
+        }
+        //一级机构设置修改视图
+        public async Task<ActionResult> Leve1Update(string obj)
+        {
+            config_file_first_kind leve1=await leveldao.FindIDAsync(obj);
+            ViewBag.s=leve1;
+            return View();
+        }
+        //1级机构设置修改
+        public async Task<ActionResult> Leve1UpdateZX(config_file_first_kind t)
+        {
+            int dore = await leveldao.UpdateAsync(t);
+            if (dore == 1)
+            {
+                return Content("1");
+            }
+            else
+            {
+                return Content("2");
+            }
+        }
+    }
+}

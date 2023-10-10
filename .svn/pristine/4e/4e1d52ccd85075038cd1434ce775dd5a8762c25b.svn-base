@@ -1,0 +1,120 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>register_list</title>
+    <link href="~/Scripts/css/table.css" rel="stylesheet" />
+    <script type="text/javascript" src="~/Scripts/javascript/jquery-1.7.2.js"></script>
+    <script src="~/Scripts/vue/dist/vue.js"></script>
+    <script src="~/Scripts/element-ui/lib/index.js"></script>
+    <link href="~/Scripts/element-ui/lib/theme-chalk/index.css" rel="stylesheet" />
+    <script src="~/Scripts/axios/dist/axios.js"></script>
+    <style type="text/css">
+    </style>
+</head>
+<body>
+    <div id="app">
+        <el-card class="box-card">
+            <div slot="header" class="clearfix">
+                <el-breadcrumb separator="/">
+                    <el-breadcrumb-item>首页</el-breadcrumb-item>
+                    <el-breadcrumb-item>人力资源</el-breadcrumb-item>
+                    <el-breadcrumb-item>调动管理</el-breadcrumb-item>
+                    <el-breadcrumb-item>调动登记列表</el-breadcrumb-item>
+                </el-breadcrumb>
+            </div>
+            <div class="text item">
+                <el-table :data="tableData"
+                          border
+                          style="width: 100%"
+                          :cell-style="{ textAlign: 'center' }"
+                          :header-cell-style="{textAlign: 'center'}">
+                    <el-table-column prop="first_kind_name"
+                                     label="I级机构"
+                                     width="250px">
+                    </el-table-column>
+                    <el-table-column prop="second_kind_name"
+                                     label="II级机构"
+                                     width="250px">
+                    </el-table-column>
+                    <el-table-column prop="third_kind_name"
+                                     label="III级机构"
+                                     width="250px">
+                    </el-table-column>
+                    <el-table-column prop="salary_standard_name"
+                                     label="薪酬标准"
+                                     width="200px">
+                    </el-table-column>
+                    <el-table-column prop="human_name"
+                                     label="名称"
+                                     width="200px">
+                    </el-table-column>
+                    <el-table-column label="调动">
+                        <template slot-scope="scope">
+                            <el-button size="mini" v-on:click="td(scope.row.human_id)">调动</el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+                <el-pagination v-on:size-change="handleSizeChange"
+                               v-on:current-change="handleCurrentChange"
+                               :current-page="currentPage"
+                               :page-sizes="[3, 6,9]"
+                               :page-size="pagesize"
+                               layout="total, sizes, prev, pager, next, jumper"
+                               :total="Totalnumber"
+                               style="padding-left: 30%; padding-top: 10px;">
+                </el-pagination>
+            </div>
+            </el-card>
+            </div>
+</body>
+</html>
+<script type="text/javascript">
+    var vm = new Vue({
+        el: "#app",
+        data: {
+            tableData: [],
+            currentPage: 1,
+            pagesize: 3,
+            Totalnumber: 0,
+            where: "",
+        },
+        methods: {
+            find() {
+                axios.get("/Transfer/FindHf", {
+                    params: {
+                        currentPage: this.currentPage,
+                        pageSize: this.pagesize,
+                        where: this.where
+                    }
+                }).then(res => {
+                    this.tableData = res.data.CList;
+                    this.Totalnumber = res.data.Totalnumber;
+                }).catch(err => {
+                    console.log(err);
+                })
+            },
+            handleSizeChange(val) {
+                this.pagesize = val;
+                this.find();
+            },
+            handleCurrentChange(val) {
+                this.currentPage = val;
+                this.find();
+            },
+            td(id) {
+                location.href = "register?HFId=" + id;
+            }
+        },
+        mounted: function () {
+            this.where =@Html.Raw(Json.Encode(@ViewBag.where));
+            this.find();
+        }
+    })
+</script>

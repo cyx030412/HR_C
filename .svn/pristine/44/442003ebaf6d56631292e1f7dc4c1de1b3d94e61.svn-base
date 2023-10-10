@@ -1,0 +1,28 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>main</title>
+    <style type="text/css">
+        body {
+            background-color: white;
+            background-image: url('../../scripts/images/11041r35400-19.jpg');
+            background-repeat: no-repeat;
+            background-position: 130% 0;
+            margin-left: 20px;
+            margin-top: 20px;
+        }
+    </style>
+    <script type="text/javascript" src="~/Scripts/javascript/jquery-1.7.2.js"></script>
+    <script src="~/Scripts/javascript/jquery.messager.js"></script>
+</head>
+<body>
+</body>
+</html>
+

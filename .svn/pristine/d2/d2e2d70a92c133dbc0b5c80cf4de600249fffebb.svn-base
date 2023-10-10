@@ -1,0 +1,295 @@
+﻿
+@{
+    Layout = null;
+
+}
+@using Model
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>salarystandard_check</title>
+    <link href="~/Scripts/css/table.css" rel="stylesheet" />
+    <script type="text/javascript" src="~/Scripts/javascript/comm/comm.js"></script>
+    <script type="text/javascript" src="~/Scripts/javascript/jquery-1.7.2.js"></script>
+    <script src="~/Scripts/vue/dist/vue.js"></script>
+    <script src="~/Scripts/element-ui/lib/index.js"></script>
+    <link href="~/Scripts/element-ui/lib/theme-chalk/index.css" rel="stylesheet" />
+    <script src="~/Scripts/axios/dist/axios.js"></script>
+    <style type="text/css">
+        .INPUT_STYLE2 {
+            width: 97%;
+        }
+        #d {
+            background-color: #FFFFBB;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            filter: alpha(opacity:20);
+            opacity: 0.2;
+            position: fixed;
+            display: none;
+        }
+
+        #parent {
+            border: 1px solid #FFDB6F;
+            width: 400px;
+            height: 200px;
+            position: absolute;
+            z-index: 2;
+            top: 20%;
+            left: 25%;
+            position: fixed;
+            display: none;
+        }
+
+        #child {
+            width: 100%;
+            height: 100%;
+            color: #C66C35;
+            font-size: 15px;
+            text-align: center;
+            line-height: 25px;
+            font-weight: bold;
+        }
+
+        .button {
+            height: 30px;
+            width: 90px;
+            border-color: #D4DEE7;
+            background-color: #D4DEE7;
+            font-weight: bold;
+            font-size: 15px;
+            color: #481858;
+            cursor: pointer;
+            BORDER-BOTTOM: #D4DEE7 1px solid;
+            FILTER: progid:DXImageTransform.Microsoft.Gradient(GradientType=0, StartColorStr=#ffffff, EndColorStr=#C3DAF5);
+        }
+    </style>
+</head>
+<script src="~/Scripts/javascript/jquery-1.7.2.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $("#button1").click(function () {
+            $("#table1").hide(800);
+            $("#table2").hide(800);
+
+            $("#d").show(1800);
+            $("#parent").fadeIn(2200);
+        });
+        $("#close").click(function () {
+            $("#d").hide(800);
+            $("#parent").hide(600);
+
+            $("#table1").show(1000);
+            $("#table2").show(1000);
+
+        });
+        $("#sure").click(function () {
+
+            $("#d").hide(800);
+            $("#parent").fadeOut(600);
+
+            $("#table1").show(1000);
+            $("#table2").show(1000);
+        });
+    });
+
+
+</script>
+<body>
+    <div id="app">
+        @{ salary_standard leve1 = ViewBag.list;
+        }
+        <form method="post" action="salarystandard_register_success.html">
+            <input type="hidden" name="standard.standardId" value="1353320112255">
+
+            <div id="d"></div>
+            <div id="parent">
+                <div id="child">
+                    <br><br>
+                    {{form.userName}},您确认打印此页面的信息吗？<br><br><br>
+                    <input type="button" class="button" value="确 定" id="sure" v-on:click="excee"/>
+                    <input type="button" class="button" value="取 消" id="close" />
+                </div>
+            </div>
+            <table width="100%">
+                <tr>
+                    <td>
+                        <font color="black">
+                            您正在做的业务是：人力资源--薪酬标准管理--薪酬标准登记查询
+
+                        </font>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="right">
+                        <input type="button" value="打印" id="button1"
+                               class="BUTTON_STYLE1">
+                        <input type="reset" value="返 回" class="BUTTON_STYLE1" onclick="history.back();">
+                    </td>
+                </tr>
+            </table>
+            <table width="100%" border="1" cellpadding=0 cellspacing=1
+                   bordercolorlight=#848284 bordercolordark=#eeeeee id="table2"
+                   class="TABLE_STYLE1">
+                <tr>
+                    <td width="12%" class="TD_STYLE1">
+                        薪酬编号
+                    </td>
+                    <td width="15%" class="TD_STYLE2">
+                        {{form.No}}
+                    </td>
+                    <td width="12%" class="TD_STYLE1">
+                        薪酬标准名称
+                    </td>
+                    <td width="11%" class="TD_STYLE2">
+                        {{form.name}}
+                    </td>
+                    <td width="11%" class="TD_STYLE1">
+                        薪酬总额
+                    </td>
+                    <td width="17%" class="TD_STYLE2">
+                        {{form.sum}}
+                    </td>
+                    <td class="TD_STYLE1" width="12%">
+                        &nbsp;
+                    </td>
+                    <td class="TD_STYLE2" width="10%">
+                        &nbsp;
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TD_STYLE1">
+                        制定人
+                    </td>
+                    <td class="TD_STYLE2">
+                        {{form.designer}}
+                    </td>
+                    <td class="TD_STYLE1">
+                        复核人
+                    </td>
+                    <td class="TD_STYLE2">
+                        {{form.register}}
+                    </td>
+                    <td class="TD_STYLE1">
+                        复核时间
+                    </td>
+                    <td class="TD_STYLE2">
+                        {{form.regist_time|ftime}}
+                    </td>
+                    <td class="TD_STYLE1">
+                        &nbsp;
+                    </td>
+                    <td class="TD_STYLE2">
+                        &nbsp;
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TD_STYLE1">
+                        备注
+                    </td>
+                    <td colspan="7" class="TD_STYLE2" height="68">
+                        {{form.Remark}}
+                    </td>
+                </tr>
+                <tr>
+                    <td class="TD_STYLE1">
+                        序号
+                    </td>
+                    <td colspan="3" class="TD_STYLE1">
+                        薪酬项目名称
+                    </td>
+                    <td colspan="4" class="TD_STYLE1">
+                        金额
+                    </td>
+                </tr>
+
+                <tr class="TD_STYLE2" v-for="(item,index) in Listdate">
+                    <td align="center">
+                        {{item.item_id}}
+                    </td>
+                    <td colspan="3">
+                        {{item.item_name}}
+                    </td>
+                    <td>
+                        {{item.salary}}
+                    </td>
+                    <td colspan="3">
+                        &nbsp;
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</body>
+</html>
+<script type="text/javascript">
+    var vm = new Vue({
+        el: "#app",
+        data: {
+            Listdate: [],
+            form: {
+                No: "",
+                name: "",
+                sum: 0,
+                designer: "",
+                register: "",
+                regist_time: "",
+                Remark: "",
+                userName: localStorage.getItem("UNAME"),
+            }
+        },
+        methods: {
+            tj: function () {
+
+            },
+            find: function () {
+                axios.get("/Salary_scale/SSDId",
+                    {
+                        params: {
+                            No: this.form.No
+                        }
+                    }).then(res => {
+                        this.Listdate = res.data;
+                    }).catch(err => {
+                        console.log(err);
+                    })
+            },
+            excee: function () {
+                axios.get("ExcelOut", {
+                    params: {
+                        No: this.form.No
+                    }
+                }).then(res => {
+                    alert(res.data)
+                }).catch(err => {
+                    console.log(err);
+                })
+            }
+        },
+        mounted: function () {
+            this.form.name  =@Html.Raw(Json.Encode(@leve1.standard_name));
+            this.form.sum =@Html.Raw(Json.Encode(@leve1.salary_sum));
+            this.form.designer =@Html.Raw(Json.Encode(@leve1.designer));
+            this.form.No =@Html.Raw(Json.Encode(@leve1.standard_id));
+            this.form.register =@Html.Raw(Json.Encode(@leve1.register));
+            this.form.regist_time=@Html.Raw(Json.Encode(@leve1.regist_time));
+            this.form.Remark =@Html.Raw(Json.Encode(@leve1.remark));
+            this.find();
+        },
+        filters: {
+            ftime: function (value) {
+                if (value == '/Date(-62135596800000)/') {
+                    return '空'
+                }
+                var dt = new Date(parseInt(value.replace("/Date(", "").replace(")/", ""), 10));
+                return dt.getFullYear() + "-" + (dt.getMonth() + 1) + "-" + dt.getDate();
+            }
+        }
+    })
+</script>
